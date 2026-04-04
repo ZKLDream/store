@@ -1,0 +1,140 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.scrollView {
+  height: 100vh;
+  padding: $spacing-lg;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 200rpx 0;
+}
+
+.emptyIcon {
+  font-size: 128rpx;
+  display: block;
+  margin-bottom: $spacing-lg;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  display: block;
+}
+
+.cartFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: $shadow-float;
+}
+
+.totalPrice {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.totalAmount {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+}
+
+.checkoutBtn {
+  @include button-reset;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  padding: $spacing-sm $spacing-xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.modal {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 700rpx;
+  padding: $spacing-xl;
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-lg;
+}
+
+.formGroup {
+  margin-bottom: $spacing-md;
+}
+
+.formLabel {
+  display: block;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+}
+
+.formInput {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  background: $color-bg-card;
+  height: 88rpx;
+  line-height: 1.5;
+}
+
+.modalButtons {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+}
+
+.modalBtn {
+  @include button-reset;
+  flex: 1;
+  padding: $spacing-md;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+
+  &Cancel {
+    background: $color-bg-page;
+    color: $color-text-secondary;
+  }
+
+  &Confirm {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+}

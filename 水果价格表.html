@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍎 水果价格管理表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .top-profit {
+            padding: 30px;
+            background: #fff3cd;
+            margin: 0 30px;
+            border-radius: 12px;
+        }
+        
+        .top-profit h2 {
+            color: #856404;
+            margin-bottom: 20px;
+        }
+        
+        .top-profit table {
+            width: 100%;
+        }
+        
+        .category-section {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-section:last-child {
+            border-bottom: none;
+        }
+        
+        .category-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .profit-positive {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .price {
+            font-weight: 500;
+        }
+        
+        .footer {
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍎 水果价格管理表</h1>
+            <p>本文档整理了水果店各水果的成本价、不同时段售价及利润信息</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">23</div>
+                <div class="label">水果总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">¥7.10</div>
+                <div class="label">平均利润（8点）</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">¥7.10</div>
+                <div class="label">平均利润（12点）</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">¥7.10</div>
+                <div class="label">平均利润（18点）</div>
+            </div>
+        </div>
+        
+        <div class="top-profit" style="margin-top: 30px;">
+            <h2>🏆 利润 TOP 5</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>水果名称</th>
+                        <th>平均利润</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>金枕榴莲</td>
+                        <td class="profit-positive">¥28.90</td>
+                        <td class="profit-positive">¥28.90</td>
+                        <td class="profit-positive">¥28.90</td>
+                        <td class="profit-positive">¥28.90</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>山竹</td>
+                        <td class="profit-positive">¥17.90</td>
+                        <td class="profit-positive">¥17.90</td>
+                        <td class="profit-positive">¥17.90</td>
+                        <td class="profit-positive">¥17.90</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>阳光玫瑰</td>
+                        <td class="profit-positive">¥15.90</td>
+                        <td class="profit-positive">¥15.90</td>
+                        <td class="profit-positive">¥15.90</td>
+                        <td class="profit-positive">¥15.90</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td>草莓</td>
+                        <td class="profit-positive">¥11.90</td>
+                        <td class="profit-positive">¥11.90</td>
+                        <td class="profit-positive">¥11.90</td>
+                        <td class="profit-positive">¥11.90</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td>蓝莓</td>
+                        <td class="profit-positive">¥8.90</td>
+                        <td class="profit-positive">¥8.90</td>
+                        <td class="profit-positive">¥8.90</td>
+                        <td class="profit-positive">¥8.90</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🍌 常见水果</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>香蕉</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>红富士苹果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>香梨</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>脐橙/沃柑</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>蜜桔</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🍉 瓜类</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>麒麟西瓜</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>哈密瓜</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>甜瓜</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🥭 热带水果</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>台农芒果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白心火龙果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>红心火龙果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥7.5</td>
+                        <td class="price">¥7.5</td>
+                        <td class="price">¥7.5</td>
+                        <td class="profit-positive">¥6.5</td>
+                        <td class="profit-positive">¥6.5</td>
+                        <td class="profit-positive">¥6.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>金枕榴莲</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥29.9</td>
+                        <td class="price">¥29.9</td>
+                        <td class="price">¥29.9</td>
+                        <td class="profit-positive">¥28.9</td>
+                        <td class="profit-positive">¥28.9</td>
+                        <td class="profit-positive">¥28.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>山竹</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥18.9</td>
+                        <td class="price">¥18.9</td>
+                        <td class="price">¥18.9</td>
+                        <td class="profit-positive">¥17.9</td>
+                        <td class="profit-positive">¥17.9</td>
+                        <td class="profit-positive">¥17.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>红肉菠萝蜜</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="price">¥3.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                        <td class="profit-positive">¥2.5</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🍇 葡萄提子类</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>阳光玫瑰</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥16.9</td>
+                        <td class="price">¥16.9</td>
+                        <td class="price">¥16.9</td>
+                        <td class="profit-positive">¥15.9</td>
+                        <td class="profit-positive">¥15.9</td>
+                        <td class="profit-positive">¥15.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>无籽红提</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥7.9</td>
+                        <td class="price">¥7.9</td>
+                        <td class="price">¥7.9</td>
+                        <td class="profit-positive">¥6.9</td>
+                        <td class="profit-positive">¥6.9</td>
+                        <td class="profit-positive">¥6.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>巨峰葡萄</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🫐 小果/盒装</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>蓝莓</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥9.9</td>
+                        <td class="price">¥9.9</td>
+                        <td class="price">¥9.9</td>
+                        <td class="profit-positive">¥8.9</td>
+                        <td class="profit-positive">¥8.9</td>
+                        <td class="profit-positive">¥8.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>草莓</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥12.9</td>
+                        <td class="price">¥12.9</td>
+                        <td class="price">¥12.9</td>
+                        <td class="profit-positive">¥11.9</td>
+                        <td class="profit-positive">¥11.9</td>
+                        <td class="profit-positive">¥11.9</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>圣女果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="price">¥4.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                        <td class="profit-positive">¥3.5</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🍍 其他</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>水果名称</th>
+                        <th>成本价</th>
+                        <th>8点价格</th>
+                        <th>12点价格</th>
+                        <th>18点价格</th>
+                        <th>8点利润</th>
+                        <th>12点利润</th>
+                        <th>18点利润</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>凤梨</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="price">¥5.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                        <td class="profit-positive">¥4.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>进口橙</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="price">¥6.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                        <td class="profit-positive">¥5.5</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>牛油果</strong></td>
+                        <td>¥1.0</td>
+                        <td class="price">¥6.9</td>
+                        <td class="price">¥6.9</td>
+                        <td class="price">¥6.9</td>
+                        <td class="profit-positive">¥5.9</td>
+                        <td class="profit-positive">¥5.9</td>
+                        <td class="profit-positive">¥5.9</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>📅 文档生成时间：2026-04-04</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">💡 使用说明：成本价默认¥1.0，利润=售价-成本价</p>
+        </div>
+    </div>
+</body>
+</html>

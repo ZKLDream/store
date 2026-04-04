@@ -1,0 +1,116 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.scrollView {
+  height: 100vh;
+  padding: $spacing-lg;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 200rpx 0;
+}
+
+.emptyIcon {
+  font-size: 128rpx;
+  display: block;
+  margin-bottom: $spacing-lg;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  display: block;
+}
+
+.orderCard {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $color-divider;
+}
+
+.orderId {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+}
+
+.orderTime {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+  display: block;
+}
+
+.orderStatus {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-success;
+}
+
+.orderItems {
+  padding: $spacing-md 0;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+}
+
+.orderItemName {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.orderItemPrice {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.orderAddress {
+  padding: $spacing-md 0;
+  border-top: 1px solid $color-divider;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.orderAddress Text {
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.orderFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-divider;
+}
+
+.orderTotal {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.orderTotalAmount {
+  font-size: 36rpx;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+  margin-left: $spacing-xs;
+}
