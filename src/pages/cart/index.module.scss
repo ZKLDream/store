@@ -3,7 +3,7 @@
 .container {
   min-height: 100vh;
   background: $color-bg-page;
-  padding-bottom: 200rpx;
+  padding-bottom: calc(200rpx + 100rpx + env(safe-area-inset-bottom));
 }
 
 .scrollView {
@@ -30,7 +30,7 @@
 
 .cartFooter {
   position: fixed;
-  bottom: 0;
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
   background: $color-bg-card;

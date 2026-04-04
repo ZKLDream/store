@@ -1,0 +1,71 @@
+@use '@/styles/variables.scss' as *;
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(100rpx + env(safe-area-inset-bottom));
+  background: $color-bg-card;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 999;
+}
+
+.tabItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-top: $spacing-sm;
+  transition: all $transition-base;
+
+  &Active {
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.tabIcon {
+  font-size: 48rpx;
+  line-height: 1;
+  position: relative;
+  margin-bottom: $spacing-xs;
+  transition: all $transition-base;
+
+  &Active {
+    transform: scale(1.1);
+  }
+}
+
+.badge {
+  position: absolute;
+  top: -8rpx;
+  right: -16rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  background: $color-price;
+  color: $color-text-white;
+  font-size: 20rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6rpx;
+}
+
+.tabText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1;
+  transition: all $transition-base;
+
+  &Active {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+}

@@ -2,7 +2,7 @@
 
 .container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 100rpx - env(safe-area-inset-bottom));
   background: $color-bg-page;
 }
 
