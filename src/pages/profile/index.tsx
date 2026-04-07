@@ -41,6 +41,13 @@ const ProfilePage: React.FC = () => {
           <Text className={styles.entranceArrow}>›</Text>
         </View>
 
+        <View className={styles.introSection}>
+          <Text className={styles.introTitle}>关于本小程序</Text>
+          <Text className={styles.introText}>
+            这是一款水果店销售清单记录工具，用于记录每日销售商品、计算销售额和利润。所有数据存储在本地，不是电商平台，不提供在线购买功能。
+          </Text>
+        </View>
+
         <Text className={styles.versionInfo}>
           版本 1.0.0
         </Text>
