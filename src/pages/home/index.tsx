@@ -8,7 +8,7 @@ import styles from './index.module.scss';
 const HomePage: React.FC = () => {
   const [currentCategory, setCurrentCategory] = useState(categories[0]);
   const [selectedSpecs, setSelectedSpecs] = useState<Record<number, string>>({});
-  const { addToCart } = useApp();
+  const { addToList } = useApp();
 
   const products = fruitsData.filter(f => f.category === currentCategory);
 
@@ -16,10 +16,10 @@ const HomePage: React.FC = () => {
     setSelectedSpecs(prev => ({ ...prev, [productId]: spec }));
   };
 
-  const handleAddToCart = (productId: number, spec: string, price: number) => {
+  const handleAddToList = (productId: number, spec: string, price: number, costPrice: number) => {
     const fruit = fruitsData.find(f => f.id === productId);
     if (fruit) {
-      addToCart(productId, fruit.name, fruit.image, spec, price);
+      addToList(productId, fruit.name, fruit.image, spec, price, costPrice);
     }
   };
 
@@ -44,7 +44,7 @@ const HomePage: React.FC = () => {
             specs={specs}
             selectedSpec={selectedSpecs[fruit.id] || specs[0]}
             onSelectSpec={(spec) => handleSelectSpec(fruit.id, spec)}
-            onAddToCart={(spec, price) => handleAddToCart(fruit.id, spec, price)}
+            onAddToList={(spec, price, costPrice) => handleAddToList(fruit.id, spec, price, costPrice)}
           />
         ))}
       </ScrollView>

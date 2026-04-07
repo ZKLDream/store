@@ -2,12 +2,12 @@ export default defineAppConfig({
   pages: [
     'pages/home/index',
     'pages/cart/index',
-    'pages/orders/index'
+    'pages/profile/index'
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#667eea',
-    navigationBarTitleText: '水果店',
+    navigationBarTitleText: '水果店记账本',
     navigationBarTextStyle: 'white'
   },
   tabBar: {
@@ -22,11 +22,11 @@ export default defineAppConfig({
       },
       {
         pagePath: 'pages/cart/index',
-        text: '购物车'
+        text: '清单'
       },
       {
-        pagePath: 'pages/orders/index',
-        text: '订单'
+        pagePath: 'pages/profile/index',
+        text: '我的'
       }
     ]
   }

@@ -41,9 +41,14 @@
   box-shadow: $shadow-float;
 }
 
+.totalInfo {
+  flex: 1;
+}
+
 .totalPrice {
   font-size: $font-size-md;
   color: $color-text-secondary;
+  margin-bottom: $spacing-xs;
 }
 
 .totalAmount {
@@ -52,14 +57,27 @@
   color: $color-price;
 }
 
+.totalProfit {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.profitAmount {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-success;
+}
+
 .checkoutBtn {
   @include button-reset;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-text-white;
   border-radius: $radius-button;
-  padding: $spacing-sm $spacing-xl;
+  padding: $spacing-md $spacing-xl;
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
+  margin-left: $spacing-lg;
+  white-space: nowrap;
 }
 
 .modalOverlay {

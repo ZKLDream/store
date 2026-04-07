@@ -4,30 +4,25 @@ export interface Fruit {
   name: string;
   desc: string;
   price: number;
+  costPrice: number;
   image: string;
 }
 
-export interface CartItem {
+export interface ListItem {
   id: number;
   productId: number;
   name: string;
   image: string;
   spec: string;
   price: number;
+  costPrice: number;
   quantity: number;
 }
 
-export interface Address {
-  name: string;
-  phone: string;
-  address: string;
-}
-
-export interface Order {
+export interface SalesRecord {
   id: number;
-  items: CartItem[];
-  address: Address;
-  total: number;
-  time: string;
-  status: string;
+  items: ListItem[];
+  totalSales: number;
+  totalProfit: number;
+  date: string;
 }

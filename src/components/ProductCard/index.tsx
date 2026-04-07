@@ -8,7 +8,7 @@ interface ProductCardProps {
   specs: string[];
   selectedSpec: string;
   onSelectSpec: (spec: string) => void;
-  onAddToCart: (spec: string, price: number) => void;
+  onAddToList: (spec: string, price: number, costPrice: number) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   specs,
   selectedSpec,
   onSelectSpec,
-  onAddToCart
+  onAddToList
 }) => {
   const specMultiplier = parseInt(selectedSpec);
   const totalPrice = (fruit.price * specMultiplier).toFixed(1);
@@ -51,10 +51,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Text>{totalPrice}</Text>
           </View>
           <Button
-            className={styles.addToCart}
-            onClick={() => onAddToCart(selectedSpec, fruit.price * specMultiplier)}
+            className={styles.addToList}
+            onClick={() => onAddToList(selectedSpec, fruit.price * specMultiplier, fruit.costPrice * specMultiplier)}
           >
-            加入购物车
+            加入清单
           </Button>
         </View>
       </View>

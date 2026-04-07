@@ -1,118 +1,125 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { CartItem, Order, Address } from '@/types';
+import { ListItem, SalesRecord } from '@/types';
 import { storage } from '@/utils/storage';
 import Taro from '@tarojs/taro';
 
 interface AppContextType {
-  cart: CartItem[];
-  orders: Order[];
-  addToCart: (productId: number, name: string, image: string, spec: string, price: number) => void;
-  updateCartItemQuantity: (itemId: number, delta: number) => void;
-  removeFromCart: (itemId: number) => void;
-  clearCart: () => void;
-  createOrder: (address: Address) => void;
-  getCartTotal: () => number;
-  getCartCount: () => number;
+  list: ListItem[];
+  salesRecords: SalesRecord[];
+  addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number) => void;
+  updateListItemQuantity: (itemId: number, delta: number) => void;
+  removeFromList: (itemId: number) => void;
+  clearList: () => void;
+  createSalesRecord: () => void;
+  getListTotal: () => number;
+  getListProfit: () => number;
+  getListCount: () => number;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [list, setList] = useState<ListItem[]>([]);
+  const [salesRecords, setSalesRecords] = useState<SalesRecord[]>([]);
 
   useEffect(() => {
-    setCart(storage.getCart());
-    setOrders(storage.getOrders());
+    setList(storage.getList());
+    setSalesRecords(storage.getSalesRecords());
   }, []);
 
-  const addToCart = (productId: number, name: string, image: string, spec: string, price: number) => {
-    const existingItem = cart.find(item => item.productId === productId && item.spec === spec);
+  const addToList = (productId: number, name: string, image: string, spec: string, price: number, costPrice: number) => {
+    const existingItem = list.find(item => item.productId === productId && item.spec === spec);
     
-    let newCart;
+    let newList;
     if (existingItem) {
-      newCart = cart.map(item => 
+      newList = list.map(item => 
         item.productId === productId && item.spec === spec
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
     } else {
-      newCart = [...cart, {
+      newList = [...list, {
         id: Date.now(),
         productId,
         name,
         image,
         spec,
         price,
+        costPrice,
         quantity: 1
       }];
     }
     
-    setCart(newCart);
-    storage.setCart(newCart);
-    Taro.showToast({ title: '已加入购物车', icon: 'success' });
+    setList(newList);
+    storage.setList(newList);
+    Taro.showToast({ title: '已加入清单', icon: 'success' });
   };
 
-  const updateCartItemQuantity = (itemId: number, delta: number) => {
-    const newCart = cart.map(item => {
+  const updateListItemQuantity = (itemId: number, delta: number) => {
+    const newList = list.map(item => {
       if (item.id === itemId) {
         return { ...item, quantity: Math.max(0, item.quantity + delta) };
       }
       return item;
     }).filter(item => item.quantity > 0);
     
-    setCart(newCart);
-    storage.setCart(newCart);
+    setList(newList);
+    storage.setList(newList);
   };
 
-  const removeFromCart = (itemId: number) => {
-    const newCart = cart.filter(item => item.id !== itemId);
-    setCart(newCart);
-    storage.setCart(newCart);
+  const removeFromList = (itemId: number) => {
+    const newList = list.filter(item => item.id !== itemId);
+    setList(newList);
+    storage.setList(newList);
   };
 
-  const clearCart = () => {
-    setCart([]);
-    storage.setCart([]);
+  const clearList = () => {
+    setList([]);
+    storage.setList([]);
   };
 
-  const createOrder = (address: Address) => {
-    const total = getCartTotal();
-    const order: Order = {
+  const createSalesRecord = () => {
+    const totalSales = getListTotal();
+    const totalProfit = getListProfit();
+    const salesRecord: SalesRecord = {
       id: Date.now(),
-      items: [...cart],
-      address,
-      total,
-      time: new Date().toLocaleString('zh-CN'),
-      status: '待发货'
+      items: [...list],
+      totalSales,
+      totalProfit,
+      date: new Date().toLocaleString('zh-CN')
     };
 
-    const newOrders = [order, ...orders];
-    setOrders(newOrders);
-    storage.setOrders(newOrders);
-    clearCart();
-    Taro.showToast({ title: '下单成功', icon: 'success' });
+    const newSalesRecords = [salesRecord, ...salesRecords];
+    setSalesRecords(newSalesRecords);
+    storage.setSalesRecords(newSalesRecords);
+    clearList();
+    Taro.showToast({ title: '结算成功', icon: 'success' });
   };
 
-  const getCartTotal = () => {
-    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const getListTotal = () => {
+    return list.reduce((sum, item) => sum + item.price * item.quantity, 0);
   };
 
-  const getCartCount = () => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  const getListProfit = () => {
+    return list.reduce((sum, item) => sum + (item.price - item.costPrice) * item.quantity, 0);
+  };
+
+  const getListCount = () => {
+    return list.reduce((sum, item) => sum + item.quantity, 0);
   };
 
   return (
     <AppContext.Provider value={{
-      cart,
-      orders,
-      addToCart,
-      updateCartItemQuantity,
-      removeFromCart,
-      clearCart,
-      createOrder,
-      getCartTotal,
-      getCartCount
+      list,
+      salesRecords,
+      addToList,
+      updateListItemQuantity,
+      removeFromList,
+      clearList,
+      createSalesRecord,
+      getListTotal,
+      getListProfit,
+      getListCount
     }}>
       {children}
     </AppContext.Provider>

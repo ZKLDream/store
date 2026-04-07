@@ -37,11 +37,29 @@
   display: block;
 }
 
+.priceInfo {
+  margin-top: $spacing-sm;
+}
+
 .cartItemPrice {
-  font-size: 32rpx;
+  font-size: $font-size-md;
   font-weight: $font-weight-bold;
   color: $color-price;
-  margin-top: $spacing-sm;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.cartItemCostPrice {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.cartItemProfit {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-success;
   display: block;
 }
 

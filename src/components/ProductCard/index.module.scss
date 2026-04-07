@@ -78,7 +78,7 @@
   font-size: $font-size-sm;
 }
 
-.addToCart {
+.addToList {
   @include button-reset;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-text-white;

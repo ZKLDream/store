@@ -18,20 +18,20 @@ const tabList: TabItem[] = [
   },
   {
     pagePath: '/pages/cart/index',
-    text: '购物车',
-    icon: '🛒'
+    text: '清单',
+    icon: '📝'
   },
   {
-    pagePath: '/pages/orders/index',
-    text: '订单',
-    icon: '📋'
+    pagePath: '/pages/profile/index',
+    text: '我的',
+    icon: '👤'
   }
 ];
 
 const CustomTabBar: React.FC = () => {
-  const { cart } = useApp();
+  const { list } = useApp();
   const [currentPagePath, setCurrentPagePath] = useState('');
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = list.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const updateCurrentPath = () => {
@@ -59,7 +59,7 @@ const CustomTabBar: React.FC = () => {
     <View className={styles.tabBar}>
       {tabList.map((item) => {
         const isActive = currentPagePath === item.pagePath;
-        const showBadge = item.text === '购物车' && cartCount > 0;
+        const showBadge = item.text === '清单' && cartCount > 0;
 
         return (
           <View

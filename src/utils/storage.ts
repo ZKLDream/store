@@ -1,42 +1,42 @@
 import Taro from '@tarojs/taro';
 
-const CART_KEY = 'fruitCart';
-const ORDERS_KEY = 'fruitOrders';
+const LIST_KEY = 'fruitList';
+const SALES_RECORDS_KEY = 'fruitSalesRecords';
 
 export const storage = {
-  getCart: () => {
+  getList: () => {
     try {
-      const data = Taro.getStorageSync(CART_KEY);
+      const data = Taro.getStorageSync(LIST_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.error('[Storage] getCart error', e);
+      console.error('[Storage] getList error', e);
       return [];
     }
   },
 
-  setCart: (cart: any[]) => {
+  setList: (list: any[]) => {
     try {
-      Taro.setStorageSync(CART_KEY, JSON.stringify(cart));
+      Taro.setStorageSync(LIST_KEY, JSON.stringify(list));
     } catch (e) {
-      console.error('[Storage] setCart error', e);
+      console.error('[Storage] setList error', e);
     }
   },
 
-  getOrders: () => {
+  getSalesRecords: () => {
     try {
-      const data = Taro.getStorageSync(ORDERS_KEY);
+      const data = Taro.getStorageSync(SALES_RECORDS_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.error('[Storage] getOrders error', e);
+      console.error('[Storage] getSalesRecords error', e);
       return [];
     }
   },
 
-  setOrders: (orders: any[]) => {
+  setSalesRecords: (salesRecords: any[]) => {
     try {
-      Taro.setStorageSync(ORDERS_KEY, JSON.stringify(orders));
+      Taro.setStorageSync(SALES_RECORDS_KEY, JSON.stringify(salesRecords));
     } catch (e) {
-      console.error('[Storage] setOrders error', e);
+      console.error('[Storage] setSalesRecords error', e);
     }
   }
 };
