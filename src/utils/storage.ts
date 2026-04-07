@@ -5,7 +5,7 @@ const SALES_RECORDS_KEY = 'fruitSalesRecords';
 const USER_PROFILE_KEY = 'userProfile';
 
 const DEFAULT_USER_PROFILE = {
-  avatar: '🍎',
+  avatar: 'https://copilot-cn.bytedance.net/api/ide/v1/text_to_image?prompt=friendly%20fruit%20shop%20owner%20surrounded%20by%20fresh%20fruits%20like%20apples%20oranges%20bananas%2C%20smiling%20happy%20expression%2C%20cartoon%20style%2C%20high%20quality%2C%20portrait&image_size=square_hd',
   name: '水果店老板'
 };
 
