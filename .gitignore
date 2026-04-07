@@ -16,3 +16,8 @@ yarn-error.log*
 *.log
 .trae
 .swc
+
+# 环境变量文件（包含敏感信息）
+.env
+.env.local
+.env.*.local

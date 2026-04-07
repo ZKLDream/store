@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from feishu_api_client import FeishuAPIClient
+import os
 
-# 飞书应用凭证
-APP_ID = "cli_a9253f2aaa225bd3"
-APP_SECRET = "n84zYzU6RAfjpu6EOtZ0Fg3hTW84BE7x"
+# 飞书应用凭证 - 请从环境变量或 .env 文件读取
+APP_ID = os.getenv("FEISHU_APP_ID", "your_app_id_here")
+APP_SECRET = os.getenv("FEISHU_APP_SECRET", "your_app_secret_here")
 
-# 刚才创建的文档ID
-DOCUMENT_ID = "YBZqdRURjoBVTQxNPWFc2j9pnWh"
+# 文档ID - 请从环境变量或配置文件读取
+DOCUMENT_ID = os.getenv("FEISHU_DOCUMENT_ID", "your_document_id_here")
 
 def main():
     print("🔐 开始设置文档权限...")
