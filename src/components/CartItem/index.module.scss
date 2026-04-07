@@ -87,3 +87,90 @@
   text-align: center;
   color: $color-text-primary;
 }
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.modal {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 700rpx;
+  padding: $spacing-xl;
+}
+
+.modalTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xl;
+  text-align: center;
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  background: $color-bg-page;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-sm;
+  min-height: 100rpx;
+}
+
+.priceInput {
+  flex: 1;
+  padding: $spacing-sm 0;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-xl;
+  background: transparent;
+  text-align: center;
+  height: auto;
+  line-height: 1.5;
+  color: $color-text-primary;
+  vertical-align: middle;
+}
+
+.unitText {
+  font-size: $font-size-xl;
+  color: $color-text-secondary;
+  font-weight: $font-weight-semibold;
+  padding-right: $spacing-sm;
+}
+
+.modalButtons {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.modalBtn {
+  @include button-reset;
+  flex: 1;
+  padding: $spacing-md;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+
+  &Cancel {
+    background: $color-bg-page;
+    color: $color-text-secondary;
+  }
+
+  &Confirm {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+  }
+}

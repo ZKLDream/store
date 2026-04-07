@@ -1,0 +1,98 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+}
+
+.scrollView {
+  height: 100vh;
+  padding: $spacing-lg;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 200rpx 0;
+}
+
+.emptyIcon {
+  font-size: 128rpx;
+  display: block;
+  margin-bottom: $spacing-lg;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  display: block;
+}
+
+.header {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.dateLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.date {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  display: block;
+}
+
+.itemsSection {
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-md;
+}
+
+.summary {
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.summaryLabel {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.totalSales {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+}
+
+.totalProfit {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-success;
+}

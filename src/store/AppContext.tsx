@@ -6,8 +6,12 @@ import Taro from '@tarojs/taro';
 interface AppContextType {
   list: ListItem[];
   salesRecords: SalesRecord[];
-  addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number) => void;
+  userAvatar: string;
+  userName: string;
+  addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
+  updateListItemPrice: (itemId: number, price: number) => void;
+  updateListItemCostPrice: (itemId: number, costPrice: number) => void;
   removeFromList: (itemId: number) => void;
   clearList: () => void;
   createSalesRecord: () => void;
@@ -21,20 +25,25 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [list, setList] = useState<ListItem[]>([]);
   const [salesRecords, setSalesRecords] = useState<SalesRecord[]>([]);
+  const [userAvatar, setUserAvatar] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     setList(storage.getList());
     setSalesRecords(storage.getSalesRecords());
+    const profile = storage.getUserProfile();
+    setUserAvatar(profile.avatar);
+    setUserName(profile.name);
   }, []);
 
-  const addToList = (productId: number, name: string, image: string, spec: string, price: number, costPrice: number) => {
+  const addToList = (productId: number, name: string, image: string, spec: string, unitPrice: number, unitCostPrice: number, quantity: number) => {
     const existingItem = list.find(item => item.productId === productId && item.spec === spec);
     
     let newList;
     if (existingItem) {
       newList = list.map(item => 
         item.productId === productId && item.spec === spec
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + quantity }
           : item
       );
     } else {
@@ -44,9 +53,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         name,
         image,
         spec,
-        price,
-        costPrice,
-        quantity: 1
+        price: unitPrice,
+        costPrice: unitCostPrice,
+        quantity
       }];
     }
     
@@ -62,6 +71,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
       return item;
     }).filter(item => item.quantity > 0);
+    
+    setList(newList);
+    storage.setList(newList);
+  };
+
+  const updateListItemPrice = (itemId: number, price: number) => {
+    const newList = list.map(item => {
+      if (item.id === itemId) {
+        return { ...item, price };
+      }
+      return item;
+    });
+    
+    setList(newList);
+    storage.setList(newList);
+  };
+
+  const updateListItemCostPrice = (itemId: number, costPrice: number) => {
+    const newList = list.map(item => {
+      if (item.id === itemId) {
+        return { ...item, costPrice };
+      }
+      return item;
+    });
     
     setList(newList);
     storage.setList(newList);
@@ -112,8 +145,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     <AppContext.Provider value={{
       list,
       salesRecords,
+      userAvatar,
+      userName,
       addToList,
       updateListItemQuantity,
+      updateListItemPrice,
+      updateListItemCostPrice,
       removeFromList,
       clearList,
       createSalesRecord,

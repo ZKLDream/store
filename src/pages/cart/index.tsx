@@ -5,7 +5,7 @@ import CartItem from '@/components/CartItem';
 import styles from './index.module.scss';
 
 const CartPage: React.FC = () => {
-  const { list, updateListItemQuantity, getListTotal, getListProfit, createSalesRecord } = useApp();
+  const { list, updateListItemQuantity, updateListItemPrice, updateListItemCostPrice, getListTotal, getListProfit, createSalesRecord } = useApp();
 
   const handleCheckout = () => {
     if (list.length === 0) return;
@@ -26,6 +26,8 @@ const CartPage: React.FC = () => {
               key={item.id}
               item={item}
               onUpdateQuantity={updateListItemQuantity}
+              onUpdatePrice={updateListItemPrice}
+              onUpdateCostPrice={updateListItemCostPrice}
             />
           ))
         )}

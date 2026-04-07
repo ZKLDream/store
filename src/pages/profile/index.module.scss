@@ -10,29 +10,52 @@
   padding: $spacing-lg;
 }
 
-.profileCard {
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl 0;
   background: $color-bg-card;
   border-radius: $radius-md;
-  padding: $spacing-xl;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-lg;
   box-shadow: $shadow-card;
 }
 
-.profileTitle {
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  display: block;
+.avatarWrapper {
+  width: 120rpx;
+  height: 120rpx;
   margin-bottom: $spacing-md;
 }
 
-.profileInfo {
-  font-size: $font-size-md;
-  color: $color-text-secondary;
-  line-height: 1.6;
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
-.section {
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-primary 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarText {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: #fff;
+}
+
+.userName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.recordsSection {
   margin-bottom: $spacing-lg;
 }
 
@@ -44,28 +67,76 @@
   margin-bottom: $spacing-md;
 }
 
-.instructionList {
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-xl 0;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+}
+
+.emptyIcon {
+  font-size: 80rpx;
+  margin-bottom: $spacing-md;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.recordList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.recordItem {
   background: $color-bg-card;
   border-radius: $radius-md;
   padding: $spacing-lg;
   box-shadow: $shadow-card;
+  transition: all 0.2s ease;
 }
 
-.instructionItem {
+.recordDate {
+  margin-bottom: $spacing-md;
+}
+
+.dateText {
   font-size: $font-size-md;
-  color: $color-text-secondary;
-  line-height: 1.6;
-  margin-bottom: $spacing-sm;
-  display: flex;
-  align-items: flex-start;
-  gap: $spacing-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
 }
 
-.instructionItem::before {
-  content: '•';
-  color: $color-primary;
-  font-weight: bold;
-  margin-top: 4rpx;
+.recordStats {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-md;
+}
+
+.statItem {
+  flex: 1;
+  text-align: center;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.statValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.statValue.profit {
+  color: $color-success;
 }
 
 .versionInfo {

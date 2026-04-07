@@ -2,7 +2,8 @@ export default defineAppConfig({
   pages: [
     'pages/home/index',
     'pages/cart/index',
-    'pages/profile/index'
+    'pages/profile/index',
+    'pages/sales-record-detail/index'
   ],
   window: {
     backgroundTextStyle: 'light',
