@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/home/index',
     'pages/cart/index',
     'pages/profile/index',
+    'pages/sales-record-list/index',
     'pages/sales-record-detail/index'
   ],
   window: {

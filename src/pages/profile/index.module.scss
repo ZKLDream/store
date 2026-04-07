@@ -55,88 +55,49 @@
   color: $color-text-primary;
 }
 
-.recordsSection {
-  margin-bottom: $spacing-lg;
-}
-
-.sectionTitle {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-  display: block;
-  margin-bottom: $spacing-md;
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: $spacing-xl 0;
-  background: $color-bg-card;
-  border-radius: $radius-md;
-  box-shadow: $shadow-card;
-}
-
-.emptyIcon {
-  font-size: 80rpx;
-  margin-bottom: $spacing-md;
-}
-
-.emptyText {
-  font-size: $font-size-md;
-  color: $color-text-tertiary;
-}
-
-.recordList {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-}
-
-.recordItem {
+.entranceCard {
   background: $color-bg-card;
   border-radius: $radius-md;
   padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
   box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   transition: all 0.2s ease;
 }
 
-.recordDate {
-  margin-bottom: $spacing-md;
-}
-
-.dateText {
-  font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
-  color: $color-text-primary;
-}
-
-.recordStats {
+.entranceLeft {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: $spacing-md;
 }
 
-.statItem {
-  flex: 1;
-  text-align: center;
+.entranceIcon {
+  font-size: 64rpx;
 }
 
-.statLabel {
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  display: block;
-  margin-bottom: $spacing-xs;
+.entranceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
 }
 
-.statValue {
+.entranceTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
 }
 
-.statValue.profit {
-  color: $color-success;
+.entranceDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.entranceArrow {
+  font-size: 48rpx;
+  color: $color-text-tertiary;
+  font-weight: 300;
 }
 
 .versionInfo {
