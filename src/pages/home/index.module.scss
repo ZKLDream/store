@@ -35,3 +35,37 @@
   padding: $spacing-lg;
   height: 100%;
 }
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.loadingText {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  gap: $spacing-md;
+}
+
+.errorText {
+  font-size: $font-size-lg;
+  color: $color-price;
+}
+
+.retryText {
+  font-size: $font-size-md;
+  color: $color-primary;
+  text-decoration: underline;
+}

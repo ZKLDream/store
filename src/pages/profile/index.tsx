@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useApp } from '@/store/AppContext';
+import { getUserOpenId, UserInfo } from '@/utils/cloud';
 import styles from './index.module.scss';
 
 const ProfilePage: React.FC = () => {
   const { userAvatar, userName, salesRecords } = useApp();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const totalRecords = salesRecords.length;
+
+  useEffect(() => {
+    loadUserInfo();
+  }, []);
+
+  const loadUserInfo = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const info = await getUserOpenId();
+      setUserInfo(info);
+    } catch (err) {
+      setError('获取用户信息失败，请重试');
+      console.error('加载用户信息失败:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoToRecords = () => {
     Taro.navigateTo({
       url: '/pages/sales-record-list/index'
     });
   };
+
+  const displayName = userName || '用户';
+  const displayId = userInfo?.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
   return (
     <View className={styles.container}>
@@ -23,11 +48,18 @@ const ProfilePage: React.FC = () => {
               <Image className={styles.avatar} src={userAvatar} mode="aspectFill" />
             ) : (
               <View className={styles.avatarPlaceholder}>
-                <Text className={styles.avatarText}>{userName ? userName.charAt(0).toUpperCase() : '?'}</Text>
+                <Text className={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
               </View>
             )}
           </View>
-          <Text className={styles.userName}>{userName || '用户'}</Text>
+          <Text className={styles.userName}>{displayName}</Text>
+          {loading ? (
+            <Text className={styles.userId}>加载中...</Text>
+          ) : error ? (
+            <Text className={styles.userIdError} onClick={loadUserInfo}>{error}</Text>
+          ) : displayId ? (
+            <Text className={styles.userId}>{displayId}</Text>
+          ) : null}
         </View>
 
         <View className={styles.entranceCard} onClick={handleGoToRecords}>

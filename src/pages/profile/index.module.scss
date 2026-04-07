@@ -55,6 +55,19 @@
   color: $color-text-primary;
 }
 
+.userId {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: $spacing-sm;
+}
+
+.userIdError {
+  font-size: $font-size-sm;
+  color: $color-price;
+  margin-top: $spacing-sm;
+  text-decoration: underline;
+}
+
 .entranceCard {
   background: $color-bg-card;
   border-radius: $radius-md;
