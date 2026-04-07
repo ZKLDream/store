@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useApp } from '@/store/AppContext';
-import { getUserOpenId, UserInfo } from '@/utils/cloud';
+import { getUserOpenId, UserInfo, createCollection } from '@/utils/cloud';
 import styles from './index.module.scss';
 
 const ProfilePage: React.FC = () => {
@@ -14,7 +14,17 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     loadUserInfo();
+    initCollection();
   }, []);
+
+  const initCollection = async () => {
+    try {
+      const result = await createCollection();
+      console.log('初始化集合结果:', result);
+    } catch (error) {
+      console.error('初始化集合失败:', error);
+    }
+  };
 
   const loadUserInfo = async () => {
     try {

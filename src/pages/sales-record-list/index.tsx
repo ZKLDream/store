@@ -5,7 +5,7 @@ import { useApp } from '@/store/AppContext';
 import styles from './index.module.scss';
 
 const SalesRecordListPage: React.FC = () => {
-  const { salesRecords } = useApp();
+  const { salesRecords, salesRecordsLoading } = useApp();
 
   const sortedRecords = [...salesRecords].sort((a, b) => b.id - a.id);
 
@@ -14,6 +14,16 @@ const SalesRecordListPage: React.FC = () => {
       url: `/pages/sales-record-detail/index?id=${id}`
     });
   };
+
+  if (salesRecordsLoading) {
+    return (
+      <View className={styles.container}>
+        <View className={styles.loadingContainer}>
+          <Text className={styles.loadingText}>加载中...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className={styles.container}>

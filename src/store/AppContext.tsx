@@ -8,13 +8,14 @@ interface AppContextType {
   salesRecords: SalesRecord[];
   userAvatar: string;
   userName: string;
+  salesRecordsLoading: boolean;
   addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
   updateListItemPrice: (itemId: number, price: number) => void;
   updateListItemCostPrice: (itemId: number, costPrice: number) => void;
   removeFromList: (itemId: number) => void;
   clearList: () => void;
-  createSalesRecord: () => void;
+  createSalesRecord: () => Promise<void>;
   getListTotal: () => number;
   getListProfit: () => number;
   getListCount: () => number;
@@ -27,14 +28,53 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [salesRecords, setSalesRecords] = useState<SalesRecord[]>([]);
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [userName, setUserName] = useState<string>('');
+  const [salesRecordsLoading, setSalesRecordsLoading] = useState(true);
+  const [cloudInitialized, setCloudInitialized] = useState(false);
+
+  useEffect(() => {
+    const initCloud = async () => {
+      try {
+        if (Taro.cloud) {
+          Taro.cloud.init({
+            env: 'cloudbase-7gtch60w7e16d4ef',
+            traceUser: true,
+          });
+          console.log('云开发初始化成功');
+        }
+      } catch (e) {
+        console.error('云开发初始化失败:', e);
+      } finally {
+        setCloudInitialized(true);
+      }
+    };
+
+    initCloud();
+  }, []);
 
   useEffect(() => {
     setList(storage.getList());
-    setSalesRecords(storage.getSalesRecords());
     const profile = storage.getUserProfile();
     setUserAvatar(profile.avatar);
     setUserName(profile.name);
   }, []);
+
+  useEffect(() => {
+    if (cloudInitialized) {
+      loadSalesRecords();
+    }
+  }, [cloudInitialized]);
+
+  const loadSalesRecords = async () => {
+    try {
+      setSalesRecordsLoading(true);
+      const records = await storage.getSalesRecords();
+      setSalesRecords(records);
+    } catch (e) {
+      console.error('[AppContext] loadSalesRecords error', e);
+    } finally {
+      setSalesRecordsLoading(false);
+    }
+  };
 
   const addToList = (productId: number, name: string, image: string, spec: string, unitPrice: number, unitCostPrice: number, quantity: number) => {
     const existingItem = list.find(item => item.productId === productId && item.spec === spec);
@@ -111,7 +151,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     storage.setList([]);
   };
 
-  const createSalesRecord = () => {
+  const createSalesRecord = async () => {
     const totalSales = getListTotal();
     const totalProfit = getListProfit();
     const salesRecord: SalesRecord = {
@@ -124,7 +164,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     const newSalesRecords = [salesRecord, ...salesRecords];
     setSalesRecords(newSalesRecords);
-    storage.setSalesRecords(newSalesRecords);
+    await storage.setSalesRecords(newSalesRecords);
     clearList();
     Taro.showToast({ title: '结算成功', icon: 'success' });
   };
@@ -147,6 +187,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       salesRecords,
       userAvatar,
       userName,
+      salesRecordsLoading,
       addToList,
       updateListItemQuantity,
       updateListItemPrice,

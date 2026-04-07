@@ -6,6 +6,18 @@
   padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
 }
 
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loadingText {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+}
+
 .scrollView {
   padding: $spacing-lg;
 }

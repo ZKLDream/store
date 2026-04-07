@@ -1,4 +1,5 @@
 import Taro from '@tarojs/taro';
+import { insertSalesRecord, getSalesRecordsFromCloud } from './cloud';
 
 const LIST_KEY = 'fruitList';
 const SALES_RECORDS_KEY = 'fruitSalesRecords';
@@ -28,21 +29,40 @@ export const storage = {
     }
   },
 
-  getSalesRecords: () => {
+  getSalesRecords: async () => {
+    try {
+      const cloudRecords = await getSalesRecordsFromCloud();
+      if (cloudRecords && cloudRecords.length > 0) {
+        Taro.setStorageSync(SALES_RECORDS_KEY, JSON.stringify(cloudRecords));
+        return cloudRecords;
+      }
+    } catch (e) {
+      console.error('[Storage] getSalesRecords from cloud error, falling back to local', e);
+    }
+
     try {
       const data = Taro.getStorageSync(SALES_RECORDS_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.error('[Storage] getSalesRecords error', e);
+      console.error('[Storage] getSalesRecords local error', e);
       return [];
     }
   },
 
-  setSalesRecords: (salesRecords: any[]) => {
+  setSalesRecords: async (salesRecords: any[]) => {
     try {
       Taro.setStorageSync(SALES_RECORDS_KEY, JSON.stringify(salesRecords));
     } catch (e) {
-      console.error('[Storage] setSalesRecords error', e);
+      console.error('[Storage] setSalesRecords local error', e);
+    }
+
+    if (salesRecords.length > 0) {
+      const latestRecord = salesRecords[0];
+      try {
+        await insertSalesRecord(latestRecord);
+      } catch (e) {
+        console.error('[Storage] setSalesRecords cloud error', e);
+      }
     }
   },
 
