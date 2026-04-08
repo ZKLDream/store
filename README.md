@@ -29,6 +29,7 @@
 - 智能对话：基于微信云开发的 AI 能力
 - 图片生成：支持生成图片
 - Markdown 渲染：支持富文本展示
+- 原生混编：通过微信小程序原生 `agent-ui` 组件接入
 
 ## 技术栈
 
@@ -93,6 +94,22 @@ npm install
    });
    ```
 
+### 配置 AI 助手
+
+1. 复制 `.env.example` 为 `.env`
+2. 填写 `TARO_AI_BOT_ID` 为微信云开发 AI 助手真实 `botId`
+3. 如果使用环境共享，再额外填写：
+   - `TARO_AI_RESOURCE_APPID`
+   - `TARO_AI_RESOURCE_ENV`
+4. 重新执行 `npm run dev:weapp` 或 `npm run build:weapp`
+
+说明：
+- `Taro.cloud.init(...)` 只负责云开发初始化，不会自动注入 `botId`
+- `TARO_AI_*` 环境变量只在构建阶段由 Taro 配置读取，小程序运行时不会存在 `process.env`
+- `agent-ui` 运行需要微信基础库 `>= 3.7.7`
+- `agent-ui` 原生目录会先经过 `npm run build:agent-ui` 预处理，再复制到 `dist`
+- 若 `botId` 未配置，AI 页面会显示明确提示，不会继续停留在静默占位态
+
 ### 开发
 
 ```bash
@@ -124,9 +141,10 @@ npm run build:weapp
 
 ## 注意事项
 
-1. **原生混编**: 项目使用 Taro 原生混编功能，agent-ui 和 ai-chat 放在项目根目录，通过 copy 配置复制到 dist
+1. **原生混编**: 项目通过 Taro 页面承载微信原生 `agent-ui` 组件，构建时仅复制 `agent-ui` 组件目录到 `dist`
 2. **云开发**: 需要先开通微信云开发并配置云环境
 3. **多端限制**: 由于使用了微信小程序原生组件，项目仅支持微信小程序
+4. **构建预处理**: `agent-ui` 源码包含 ESM `import/export`，需要通过 `scripts/build-agent-ui.js` 转成小程序可执行脚本后再进入 `dist`
 
 ## 版本
 

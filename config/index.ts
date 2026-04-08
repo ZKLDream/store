@@ -5,6 +5,10 @@ import prodConfig from './prod';
 import vitePluginImp from 'vite-plugin-imp';
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
+  const aiBotId = JSON.stringify(process.env.TARO_AI_BOT_ID || '');
+  const aiResourceAppid = JSON.stringify(process.env.TARO_AI_RESOURCE_APPID || '');
+  const aiResourceEnv = JSON.stringify(process.env.TARO_AI_RESOURCE_ENV || '');
+
   const baseConfig: UserConfigExport<'webpack5'> = {
     projectName: 'taro_template',
     date: '2025-12-10',
@@ -18,16 +22,16 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
     sourceRoot: 'src',
     outputRoot: process.env.TARO_OUTPUT_DIR || 'dist',
     plugins: ['@tarojs/plugin-html'],
-    defineConstants: {},
+    defineConstants: {
+      __AI_BOT_ID__: aiBotId,
+      __AI_RESOURCE_APPID__: aiResourceAppid,
+      __AI_RESOURCE_ENV__: aiResourceEnv,
+    },
     copy: {
       patterns: [
         {
-          from: 'agent-ui',
+          from: '.runtime/agent-ui',
           to: 'dist/agent-ui'
-        },
-        {
-          from: 'ai-chat',
-          to: 'dist/pages/ai-chat'
         }
       ],
       options: {},

@@ -11,6 +11,10 @@ declare module '*.scss';
 declare module '*.sass';
 declare module '*.styl';
 
+declare const __AI_BOT_ID__: string;
+declare const __AI_RESOURCE_APPID__: string;
+declare const __AI_RESOURCE_ENV__: string;
+
 declare namespace NodeJS {
   interface ProcessEnv {
     /** NODE 内置环境变量, 会影响到最终构建生成产物 */
@@ -23,5 +27,20 @@ declare namespace NodeJS {
      * @see https://taro-docs.jd.com/docs/next/env-mode-config#特殊环境变量-taro_app_id
      */
     TARO_APP_ID: string
+    TARO_AI_BOT_ID?: string
+    TARO_AI_RESOURCE_APPID?: string
+    TARO_AI_RESOURCE_ENV?: string
+  }
+}
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    'agent-ui': {
+      chatMode?: 'bot' | 'model'
+      agentConfig?: Record<string, unknown>
+      modelConfig?: Record<string, unknown>
+      envShareConfig?: Record<string, unknown>
+      showBotAvatar?: boolean
+    }
   }
 }

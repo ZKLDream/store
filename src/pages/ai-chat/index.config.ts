@@ -1,3 +1,6 @@
 export default definePageConfig({
-  navigationBarTitleText: 'AI 助手'
+  navigationBarTitleText: 'AI 助手',
+  usingComponents: {
+    'agent-ui': '/agent-ui/index',
+  },
 });
