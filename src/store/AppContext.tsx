@@ -1,15 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ListItem, SalesRecord } from '@/types';
 import { storage } from '@/utils/storage';
+import { getBeforeList, deleteBeforeListRecord } from '@/utils/cloud';
 import Taro from '@tarojs/taro';
-
-const setListLocal = (list: any[]) => {
-  try {
-    Taro.setStorageSync('fruitList', JSON.stringify(list));
-  } catch (e) {
-    console.error('[Storage] setList local error', e);
-  }
-};
 
 interface AppContextType {
   list: ListItem[];
@@ -120,7 +113,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     
     setList(newList);
-    setListLocal(newList);
+    storage.setList(newList);
     Taro.showToast({ title: '已加入清单', icon: 'success' });
   };
 
@@ -133,7 +126,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }).filter(item => item.quantity > 0);
     
     setList(newList);
-    setListLocal(newList);
+    storage.setList(newList);
   };
 
   const updateListItemPrice = (itemId: number, price: number) => {
@@ -145,7 +138,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
     
     setList(newList);
-    setListLocal(newList);
+    storage.setList(newList);
   };
 
   const updateListItemCostPrice = (itemId: number, costPrice: number) => {
@@ -157,24 +150,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
     
     setList(newList);
-    setListLocal(newList);
+    storage.setList(newList);
   };
 
   const removeFromList = (itemId: number) => {
     const newList = list.filter(item => item.id !== itemId);
     setList(newList);
-    setListLocal(newList);
+    storage.setList(newList);
   };
 
   const clearList = () => {
     setList([]);
-    setListLocal([]);
+    storage.setList([]);
   };
 
   const uploadListToCloud = async () => {
     try {
-      await storage.setList(list);
-      Taro.showToast({ title: '上传成功', icon: 'success' });
+      const result = await storage.uploadListToCloud(list);
+      if (result.success) {
+        Taro.showToast({ title: '上传成功', icon: 'success' });
+      } else {
+        Taro.showToast({ title: '上传失败', icon: 'error' });
+      }
     } catch (e) {
       console.error('[AppContext] uploadListToCloud error', e);
       Taro.showToast({ title: '上传失败', icon: 'error' });
@@ -195,6 +192,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const newSalesRecords = [salesRecord, ...salesRecords];
     setSalesRecords(newSalesRecords);
     await storage.setSalesRecords(newSalesRecords);
+
+    try {
+      const cloudRecords = await getBeforeList();
+      if (cloudRecords && cloudRecords.length > 0) {
+        const recordId = cloudRecords[0]._id;
+        if (recordId) {
+          await deleteBeforeListRecord(recordId);
+        }
+      }
+    } catch (e) {
+      console.error('[AppContext] 删除云端清单记录失败', e);
+    }
+
     clearList();
     Taro.showToast({ title: '结算成功', icon: 'success' });
   };

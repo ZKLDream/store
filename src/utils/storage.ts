@@ -14,6 +14,15 @@ const DEFAULT_USER_PROFILE = {
 export const storage = {
   getList: async () => {
     try {
+      const localData = Taro.getStorageSync(LIST_KEY);
+      if (localData) {
+        return JSON.parse(localData);
+      }
+    } catch (e) {
+      console.error('[Storage] getList from local error', e);
+    }
+
+    try {
       await createBeforeListCollection();
       const cloudRecords = await getBeforeList();
       if (cloudRecords && cloudRecords.length > 0) {
@@ -22,25 +31,21 @@ export const storage = {
         return listRecord.items;
       }
     } catch (e) {
-      console.error('[Storage] getList from cloud error, falling back to local', e);
+      console.error('[Storage] getList from cloud error', e);
     }
 
-    try {
-      const data = Taro.getStorageSync(LIST_KEY);
-      return data ? JSON.parse(data) : [];
-    } catch (e) {
-      console.error('[Storage] getList local error', e);
-      return [];
-    }
+    return [];
   },
 
-  setList: async (list: any[]) => {
+  setList: (list: any[]) => {
     try {
       Taro.setStorageSync(LIST_KEY, JSON.stringify(list));
     } catch (e) {
       console.error('[Storage] setList local error', e);
     }
+  },
 
+  uploadListToCloud: async (list: any[]): Promise<{ success: boolean }> => {
     try {
       await createBeforeListCollection();
       const cloudRecords = await getBeforeList();
@@ -61,12 +66,15 @@ export const storage = {
       if (cloudRecords && cloudRecords.length > 0) {
         const existingRecord = cloudRecords[0];
         listRecord._id = existingRecord._id;
-        await updateBeforeList(listRecord);
+        const result = await updateBeforeList(listRecord);
+        return { success: result.success !== false };
       } else {
-        await insertBeforeList(listRecord);
+        const result = await insertBeforeList(listRecord);
+        return { success: result.success !== false };
       }
     } catch (e) {
-      console.error('[Storage] setList cloud error', e);
+      console.error('[Storage] uploadListToCloud error', e);
+      return { success: false };
     }
   },
 

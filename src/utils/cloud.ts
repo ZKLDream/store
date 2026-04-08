@@ -229,6 +229,28 @@ export const insertBeforeList = async (record: any): Promise<{ success: boolean;
   }
 };
 
+export const deleteBeforeListRecord = async (recordId: string): Promise<{ success: boolean; collectionName?: string; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitBeforeFunctions',
+      data: {
+        type: 'deleteRecord',
+        data: {
+          _id: recordId
+        }
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('删除清单记录失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
 export const createCollection = async (): Promise<{ success: boolean; collectionName?: string; data?: string }> => {
   try {
     const res = await Taro.cloud.callFunction({
