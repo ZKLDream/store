@@ -60,6 +60,26 @@ export const deleteFruit = async (fruitId: string): Promise<{ success: boolean; 
   }
 };
 
+export const insertFruit = async (fruit: Omit<Fruit, 'id' | '_id'>): Promise<{ success: boolean; data?: Fruit; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitFunctions',
+      data: {
+        type: 'insertRecord',
+        data: fruit
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('插入水果数据失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
 export const uploadImage = async (filePath: string): Promise<string> => {
   try {
     const cloudPath = `fruit-images/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;

@@ -34,6 +34,22 @@
   margin-bottom: $spacing-md;
 }
 
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.addButton {
+  background: $color-primary;
+  color: $color-text-white;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+}
+
 .emptyState {
   display: flex;
   flex-direction: column;

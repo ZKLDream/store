@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { Fruit } from '@/types';
-import { getFruitsData, updateFruit, deleteFruit, uploadImage } from '@/utils/cloud';
+import { getFruitsData, updateFruit, deleteFruit, uploadImage, insertFruit } from '@/utils/cloud';
 import styles from './index.module.scss';
 
 const ProductManagementPage: React.FC = () => {
@@ -12,6 +12,7 @@ const ProductManagementPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState<Partial<Fruit>>({});
   const [saving, setSaving] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -34,8 +35,23 @@ const ProductManagementPage: React.FC = () => {
   };
 
   const handleProductClick = (product: Fruit) => {
+    setIsAdding(false);
     setSelectedProduct(product);
     setEditData({ ...product });
+    setShowModal(true);
+  };
+
+  const handleAddProduct = () => {
+    setIsAdding(true);
+    setSelectedProduct(null);
+    setEditData({
+      category: '',
+      name: '',
+      desc: '',
+      price: 0,
+      costPrice: 0,
+      image: ''
+    });
     setShowModal(true);
   };
 
@@ -43,6 +59,7 @@ const ProductManagementPage: React.FC = () => {
     setShowModal(false);
     setSelectedProduct(null);
     setEditData({});
+    setIsAdding(false);
   };
 
   const handleInputChange = (field: keyof Fruit, value: any) => {
@@ -81,7 +98,7 @@ const ProductManagementPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedProduct || !editData.name || !editData.category) {
+    if (!editData.name || !editData.category) {
       Taro.showToast({
         title: '请填写完整信息',
         icon: 'none'
@@ -89,40 +106,66 @@ const ProductManagementPage: React.FC = () => {
       return;
     }
 
-    if (!selectedProduct._id) {
-      Taro.showToast({
-        title: '缺少 _id 字段',
-        icon: 'none'
-      });
-      return;
-    }
-
     try {
       setSaving(true);
-      const updatedProduct: Fruit = {
-        _id: selectedProduct._id,
-        id: selectedProduct.id,
-        category: editData.category || selectedProduct.category,
-        name: editData.name || selectedProduct.name,
-        desc: editData.desc || selectedProduct.desc,
-        price: editData.price ?? selectedProduct.price,
-        costPrice: editData.costPrice ?? selectedProduct.costPrice,
-        image: editData.image || selectedProduct.image
-      };
 
-      const result = await updateFruit([updatedProduct]);
-      if (result.success) {
-        Taro.showToast({
-          title: '保存成功',
-          icon: 'success'
+      if (isAdding) {
+        const result = await insertFruit({
+          category: editData.category!,
+          name: editData.name!,
+          desc: editData.desc || '',
+          price: editData.price ?? 0,
+          costPrice: editData.costPrice ?? 0,
+          image: editData.image || ''
         });
-        setProducts(prev => prev.map(p => p.id === selectedProduct.id ? updatedProduct : p));
-        handleCloseModal();
+
+        if (result.success && result.data) {
+          Taro.showToast({
+            title: '新增成功',
+            icon: 'success'
+          });
+          setProducts(prev => [result.data!, ...prev]);
+          handleCloseModal();
+        } else {
+          Taro.showToast({
+            title: '新增失败',
+            icon: 'none'
+          });
+        }
       } else {
-        Taro.showToast({
-          title: '保存失败',
-          icon: 'none'
-        });
+        if (!selectedProduct || !selectedProduct._id) {
+          Taro.showToast({
+            title: '缺少 _id 字段',
+            icon: 'none'
+          });
+          return;
+        }
+
+        const updatedProduct: Fruit = {
+          _id: selectedProduct._id,
+          id: selectedProduct.id,
+          category: editData.category || selectedProduct.category,
+          name: editData.name || selectedProduct.name,
+          desc: editData.desc || selectedProduct.desc,
+          price: editData.price ?? selectedProduct.price,
+          costPrice: editData.costPrice ?? selectedProduct.costPrice,
+          image: editData.image || selectedProduct.image
+        };
+
+        const result = await updateFruit([updatedProduct]);
+        if (result.success) {
+          Taro.showToast({
+            title: '保存成功',
+            icon: 'success'
+          });
+          setProducts(prev => prev.map(p => p.id === selectedProduct.id ? updatedProduct : p));
+          handleCloseModal();
+        } else {
+          Taro.showToast({
+            title: '保存失败',
+            icon: 'none'
+          });
+        }
       }
     } catch (error) {
       console.error('保存失败:', error);
@@ -195,7 +238,12 @@ const ProductManagementPage: React.FC = () => {
     <View className={styles.container}>
       <ScrollView className={styles.scrollView} scrollY>
         <View className={styles.productsSection}>
-          <Text className={styles.sectionTitle}>商品列表</Text>
+          <View className={styles.sectionHeader}>
+            <Text className={styles.sectionTitle}>商品列表</Text>
+            <View className={styles.addButton} onClick={handleAddProduct}>
+              新增
+            </View>
+          </View>
           {products.length === 0 ? (
             <View className={styles.emptyState}>
               <Text className={styles.emptyIcon}>🍎</Text>
@@ -238,11 +286,11 @@ const ProductManagementPage: React.FC = () => {
         </View>
       </ScrollView>
 
-      {showModal && selectedProduct && (
+      {showModal && (
         <View className={styles.modalOverlay} onClick={handleCloseModal}>
           <View className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <View className={styles.modalHeader}>
-              <Text className={styles.modalTitle}>编辑商品</Text>
+              <Text className={styles.modalTitle}>{isAdding ? '新增商品' : '编辑商品'}</Text>
               <Text className={styles.modalClose} onClick={handleCloseModal}>×</Text>
             </View>
             <View className={styles.modalBody}>
@@ -251,7 +299,7 @@ const ProductManagementPage: React.FC = () => {
                 <Input
                   className={styles.formInput}
                   disabled
-                  value={String(editData.id || '')}
+                  value={isAdding ? '自动生成' : String(editData.id || '')}
                 />
               </View>
 
@@ -322,14 +370,16 @@ const ProductManagementPage: React.FC = () => {
               </View>
             </View>
             <View className={styles.modalFooter}>
-              <View className={`${styles.modalButton} ${styles.delete}`} onClick={handleDelete}>
-                删除
-              </View>
+              {!isAdding && (
+                <View className={`${styles.modalButton} ${styles.delete}`} onClick={handleDelete}>
+                  删除
+                </View>
+              )}
               <View className={`${styles.modalButton} ${styles.cancel}`} onClick={handleCloseModal}>
                 取消
               </View>
               <View className={`${styles.modalButton} ${styles.save}`} onClick={handleSave}>
-                {saving ? '保存中...' : '保存'}
+                {saving ? (isAdding ? '新增中...' : '保存中...') : (isAdding ? '新增' : '保存')}
               </View>
             </View>
           </View>
