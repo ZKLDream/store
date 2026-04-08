@@ -74,6 +74,12 @@ const ProfilePage: React.FC = () => {
     });
   };
 
+  const handleGoToAiChat = () => {
+    Taro.navigateTo({
+      url: '/pages/ai-chat/index'
+    });
+  };
+
   const displayName = userName || '用户';
   const displayId = userInfo?.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
@@ -117,6 +123,17 @@ const ProfilePage: React.FC = () => {
             <View className={styles.entranceInfo}>
               <Text className={styles.entranceTitle}>商品管理</Text>
               <Text className={styles.entranceDesc}>编辑商品信息</Text>
+            </View>
+          </View>
+          <Text className={styles.entranceArrow}>›</Text>
+        </View>
+
+        <View className={styles.entranceCard} onClick={handleGoToAiChat}>
+          <View className={styles.entranceLeft}>
+            <Text className={styles.entranceIcon}>🤖</Text>
+            <View className={styles.entranceInfo}>
+              <Text className={styles.entranceTitle}>AI 助手</Text>
+              <Text className={styles.entranceDesc}>智能对话、生成图片</Text>
             </View>
           </View>
           <Text className={styles.entranceArrow}>›</Text>
