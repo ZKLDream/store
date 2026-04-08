@@ -20,13 +20,13 @@ export const getFruitsData = async (): Promise<Fruit[]> => {
   }
 };
 
-export const updateFruit = async (fruit: Fruit): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+export const updateFruit = async (fruits: Fruit[]): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
   try {
     const res = await Taro.cloud.callFunction({
       name: 'fruitFunctions',
       data: {
         type: 'updateRecord',
-        data: fruit
+        data: fruits
       }
     });
 
@@ -40,13 +40,13 @@ export const updateFruit = async (fruit: Fruit): Promise<{ success: boolean; dat
   }
 };
 
-export const deleteFruit = async (fruitId: number): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+export const deleteFruit = async (fruitId: string): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
   try {
     const res = await Taro.cloud.callFunction({
       name: 'fruitFunctions',
       data: {
         type: 'deleteRecord',
-        data: { id: fruitId }
+        data: { _id: fruitId }
       }
     });
 

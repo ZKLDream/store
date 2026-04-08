@@ -1,4 +1,5 @@
 export interface Fruit {
+  _id?: string;
   id: number;
   category: string;
   name: string;
@@ -20,6 +21,7 @@ export interface ListItem {
 }
 
 export interface SalesRecord {
+  _id?: string;
   id: number;
   items: ListItem[];
   totalSales: number;

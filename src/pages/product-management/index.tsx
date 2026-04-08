@@ -89,9 +89,18 @@ const ProductManagementPage: React.FC = () => {
       return;
     }
 
+    if (!selectedProduct._id) {
+      Taro.showToast({
+        title: '缺少 _id 字段',
+        icon: 'none'
+      });
+      return;
+    }
+
     try {
       setSaving(true);
       const updatedProduct: Fruit = {
+        _id: selectedProduct._id,
         id: selectedProduct.id,
         category: editData.category || selectedProduct.category,
         name: editData.name || selectedProduct.name,
@@ -101,7 +110,7 @@ const ProductManagementPage: React.FC = () => {
         image: editData.image || selectedProduct.image
       };
 
-      const result = await updateFruit(updatedProduct);
+      const result = await updateFruit([updatedProduct]);
       if (result.success) {
         Taro.showToast({
           title: '保存成功',
@@ -129,6 +138,14 @@ const ProductManagementPage: React.FC = () => {
   const handleDelete = async () => {
     if (!selectedProduct) return;
 
+    if (!selectedProduct._id) {
+      Taro.showToast({
+        title: '缺少 _id 字段',
+        icon: 'none'
+      });
+      return;
+    }
+
     Taro.showModal({
       title: '确认删除',
       content: `确定要删除商品「${selectedProduct.name}」吗？`,
@@ -136,7 +153,7 @@ const ProductManagementPage: React.FC = () => {
         if (res.confirm) {
           try {
             setSaving(true);
-            const result = await deleteFruit(selectedProduct.id);
+            const result = await deleteFruit(selectedProduct._id);
             if (result.success) {
               Taro.showToast({
                 title: '删除成功',
