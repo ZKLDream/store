@@ -46,6 +46,12 @@ const ProfilePage: React.FC = () => {
     });
   };
 
+  const handleGoToProductManagement = () => {
+    Taro.navigateTo({
+      url: '/pages/product-management/index'
+    });
+  };
+
   const displayName = userName || '用户';
   const displayId = userInfo?.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
@@ -78,6 +84,17 @@ const ProfilePage: React.FC = () => {
             <View className={styles.entranceInfo}>
               <Text className={styles.entranceTitle}>销售记录</Text>
               <Text className={styles.entranceDesc}>已记录 {totalRecords} 条</Text>
+            </View>
+          </View>
+          <Text className={styles.entranceArrow}>›</Text>
+        </View>
+
+        <View className={styles.entranceCard} onClick={handleGoToProductManagement}>
+          <View className={styles.entranceLeft}>
+            <Text className={styles.entranceIcon}>🍎</Text>
+            <View className={styles.entranceInfo}>
+              <Text className={styles.entranceTitle}>商品管理</Text>
+              <Text className={styles.entranceDesc}>编辑商品信息</Text>
             </View>
           </View>
           <Text className={styles.entranceArrow}>›</Text>

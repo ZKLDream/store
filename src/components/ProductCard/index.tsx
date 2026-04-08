@@ -50,7 +50,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <View className={styles.productPrice}>
             <Text className={styles.priceUnit}>¥</Text>
             <Text>{totalPrice}</Text>
-            <Text className={styles.priceUnit} style={{ marginLeft: '8rpx', fontSize: '24rpx' }}>/1斤</Text>
           </View>
           <Button
             className={styles.addToList}

@@ -20,6 +20,60 @@ export const getFruitsData = async (): Promise<Fruit[]> => {
   }
 };
 
+export const updateFruit = async (fruit: Fruit): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitFunctions',
+      data: {
+        type: 'updateRecord',
+        data: fruit
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('更新水果数据失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
+export const deleteFruit = async (fruitId: number): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitFunctions',
+      data: {
+        type: 'deleteRecord',
+        data: { id: fruitId }
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('删除水果数据失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
+export const uploadImage = async (filePath: string): Promise<string> => {
+  try {
+    const cloudPath = `fruit-images/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
+    const res = await Taro.cloud.uploadFile({
+      cloudPath,
+      filePath
+    });
+    return res.fileID;
+  } catch (error) {
+    console.error('上传图片失败:', error);
+    throw error;
+  }
+};
+
 export interface UserInfo {
   openid: string;
   appid: string;

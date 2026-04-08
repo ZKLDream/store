@@ -4,7 +4,8 @@ export default defineAppConfig({
     'pages/cart/index',
     'pages/profile/index',
     'pages/sales-record-list/index',
-    'pages/sales-record-detail/index'
+    'pages/sales-record-detail/index',
+    'pages/product-management/index'
   ],
   window: {
     backgroundTextStyle: 'light',
