@@ -5,7 +5,8 @@ export default defineAppConfig({
     'pages/profile/index',
     'pages/sales-record-list/index',
     'pages/sales-record-detail/index',
-    'pages/product-management/index'
+    'pages/product-management/index',
+    'pages/ai-chat/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -20,7 +20,16 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
     plugins: ['@tarojs/plugin-html'],
     defineConstants: {},
     copy: {
-      patterns: [],
+      patterns: [
+        {
+          from: 'agent-ui',
+          to: 'dist/agent-ui'
+        },
+        {
+          from: 'ai-chat',
+          to: 'dist/pages/ai-chat'
+        }
+      ],
       options: {},
     },
     framework: 'react',

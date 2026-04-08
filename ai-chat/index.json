@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "AI 助手",
+  "usingComponents": {
+    "agent-ui": "/agent-ui/index"
+  }
+}
