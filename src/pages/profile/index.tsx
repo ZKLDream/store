@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
+import { useDidShow } from '@tarojs/taro';
 import Taro from '@tarojs/taro';
 import { useApp } from '@/store/AppContext';
 import { getUserOpenId, UserInfo, createCollection, getMiniProgramCode } from '@/utils/cloud';
@@ -10,6 +11,7 @@ const ProfilePage: React.FC = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [miniProgramCode, setMiniProgramCode] = useState<string | null>(null);
   const [codeLoading, setCodeLoading] = useState(false);
   const totalRecords = salesRecords.length;
@@ -19,6 +21,11 @@ const ProfilePage: React.FC = () => {
     initCollection();
     loadMiniProgramCode();
   }, []);
+
+  useDidShow(() => {
+    loadUserInfo();
+    loadMiniProgramCode();
+  });
 
   const initCollection = async () => {
     try {

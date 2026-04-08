@@ -32,7 +32,7 @@ export const storage = {
   getSalesRecords: async () => {
     try {
       const cloudRecords = await getSalesRecordsFromCloud();
-      if (cloudRecords && cloudRecords.length > 0) {
+      if (cloudRecords !== null && cloudRecords !== undefined) {
         Taro.setStorageSync(SALES_RECORDS_KEY, JSON.stringify(cloudRecords));
         return cloudRecords;
       }
