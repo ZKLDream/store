@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { Fruit } from '@/types';
-import { getFruitsData, updateFruit, deleteFruit, uploadImage } from '@/utils/cloud';
+import { getFruitsData, updateFruit, deleteFruit, uploadImage, getMiniProgramCode } from '@/utils/cloud';
 import styles from './index.module.scss';
 
 const ProductManagementPage: React.FC = () => {
@@ -12,9 +12,12 @@ const ProductManagementPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState<Partial<Fruit>>({});
   const [saving, setSaving] = useState(false);
+  const [miniProgramCode, setMiniProgramCode] = useState<string | null>(null);
+  const [codeLoading, setCodeLoading] = useState(false);
 
   useEffect(() => {
     loadProducts();
+    loadMiniProgramCode();
   }, []);
 
   const loadProducts = async () => {
@@ -30,6 +33,18 @@ const ProductManagementPage: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMiniProgramCode = async () => {
+    try {
+      setCodeLoading(true);
+      const codeUrl = await getMiniProgramCode();
+      setMiniProgramCode(codeUrl);
+    } catch (error) {
+      console.error('加载小程序码失败:', error);
+    } finally {
+      setCodeLoading(false);
     }
   };
 
@@ -233,6 +248,24 @@ const ProductManagementPage: React.FC = () => {
                   </View>
                 </View>
               ))}
+            </View>
+          )}
+        </View>
+
+        <View className={styles.qrCodeSection}>
+          <Text className={styles.sectionTitle}>小程序码</Text>
+          {codeLoading ? (
+            <View className={styles.qrCodeLoading}>
+              <Text className={styles.loadingText}>加载中...</Text>
+            </View>
+          ) : miniProgramCode ? (
+            <View className={styles.qrCodeContainer}>
+              <Image className={styles.qrCodeImage} src={miniProgramCode} mode="aspectFit" />
+              <Text className={styles.qrCodeTip}>扫码进入小程序</Text>
+            </View>
+          ) : (
+            <View className={styles.qrCodeError}>
+              <Text className={styles.errorText}>加载小程序码失败</Text>
             </View>
           )}
         </View>

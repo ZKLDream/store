@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text } from '@tarojs/components';
+import { useDidShow } from '@tarojs/taro';
 import { specs, fetchFruitsData, getCategoriesFromData } from '@/data/fruits';
 import ProductCard from '@/components/ProductCard';
 import { useApp } from '@/store/AppContext';
@@ -17,6 +18,10 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     loadFruitsData();
   }, []);
+
+  useDidShow(() => {
+    loadFruitsData();
+  });
 
   const loadFruitsData = async () => {
     try {

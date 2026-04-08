@@ -99,6 +99,38 @@ export const getUserOpenId = async (): Promise<UserInfo> => {
   }
 };
 
+export const getMiniProgramCode = async (): Promise<string> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'quickstartFunctions',
+      data: {
+        type: 'getMiniProgramCode'
+      }
+    });
+
+    console.log('getMiniProgramCode 完整返回:', res);
+
+    if (res.result) {
+      console.log('res.result:', res.result);
+      
+      if (res.result.fileID) {
+        return res.result.fileID;
+      }
+      if (res.result.data && res.result.data.fileID) {
+        return res.result.data.fileID;
+      }
+      if (typeof res.result === 'string') {
+        return res.result;
+      }
+    }
+
+    throw new Error('获取小程序码失败，返回格式不正确');
+  } catch (error) {
+    console.error('获取小程序码失败:', error);
+    throw error;
+  }
+};
+
 export const createCollection = async (): Promise<{ success: boolean; collectionName?: string; data?: string }> => {
   try {
     const res = await Taro.cloud.callFunction({
