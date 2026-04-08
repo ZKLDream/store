@@ -37,7 +37,11 @@ const ProductManagementPage: React.FC = () => {
   const handleProductClick = (product: Fruit) => {
     setIsAdding(false);
     setSelectedProduct(product);
-    setEditData({ ...product });
+    setEditData({
+      ...product,
+      price: product.price.toString(),
+      costPrice: product.costPrice.toString()
+    });
     setShowModal(true);
   };
 
@@ -48,8 +52,8 @@ const ProductManagementPage: React.FC = () => {
       category: '',
       name: '',
       desc: '',
-      price: 0,
-      costPrice: 0,
+      price: '0',
+      costPrice: '0',
       image: ''
     });
     setShowModal(true);
@@ -65,7 +69,7 @@ const ProductManagementPage: React.FC = () => {
   const handleInputChange = (field: keyof Fruit, value: any) => {
     setEditData(prev => ({
       ...prev,
-      [field]: field === 'price' || field === 'costPrice' ? Number(value) || 0 : value
+      [field]: value
     }));
   };
 
@@ -106,6 +110,9 @@ const ProductManagementPage: React.FC = () => {
       return;
     }
 
+    const price = parseFloat(editData.price as string) || 0;
+    const costPrice = parseFloat(editData.costPrice as string) || 0;
+
     try {
       setSaving(true);
 
@@ -114,8 +121,8 @@ const ProductManagementPage: React.FC = () => {
           category: editData.category!,
           name: editData.name!,
           desc: editData.desc || '',
-          price: editData.price ?? 0,
-          costPrice: editData.costPrice ?? 0,
+          price: price,
+          costPrice: costPrice,
           image: editData.image || ''
         });
 
@@ -147,8 +154,8 @@ const ProductManagementPage: React.FC = () => {
           category: editData.category || selectedProduct.category,
           name: editData.name || selectedProduct.name,
           desc: editData.desc || selectedProduct.desc,
-          price: editData.price ?? selectedProduct.price,
-          costPrice: editData.costPrice ?? selectedProduct.costPrice,
+          price: price,
+          costPrice: costPrice,
           image: editData.image || selectedProduct.image
         };
 
