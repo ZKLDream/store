@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
   const handleAddToList = (productId: number, weight: number, unitPrice: number, unitCostPrice: number, quantity: number) => {
     const fruit = fruitsData.find(f => f.id === productId);
     if (fruit) {
-      addToList(productId, fruit.name, fruit.image, `${weight}斤`, unitPrice, unitCostPrice, quantity);
+      addToList(productId, fruit._id, fruit.name, fruit.image, `${weight}斤`, unitPrice, unitCostPrice, quantity);
     }
   };
 

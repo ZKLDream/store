@@ -11,7 +11,7 @@ interface AppContextType {
   userName: string;
   salesRecordsLoading: boolean;
   listLoading: boolean;
-  addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
+  addToList: (productId: number, fruitId: string | undefined, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
   updateListItemPrice: (itemId: number, price: number) => void;
   updateListItemCostPrice: (itemId: number, costPrice: number) => void;
@@ -89,19 +89,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const addToList = (productId: number, name: string, image: string, spec: string, unitPrice: number, unitCostPrice: number, quantity: number) => {
-    const existingItem = list.find(item => item.productId === productId && item.spec === spec);
+  const addToList = (productId: number, fruitId: string | undefined, name: string, image: string, spec: string, unitPrice: number, unitCostPrice: number, quantity: number) => {
+    let existingItem;
+    if (fruitId) {
+      existingItem = list.find(item => item._id === fruitId);
+    }
     
     let newList;
     if (existingItem) {
       newList = list.map(item => 
-        item.productId === productId && item.spec === spec
+        item._id === fruitId
           ? { ...item, quantity: item.quantity + quantity }
           : item
       );
     } else {
       newList = [...list, {
         id: Date.now(),
+        _id: fruitId,
         productId,
         name,
         image,

@@ -11,6 +11,7 @@ export interface Fruit {
 
 export interface ListItem {
   id: number;
+  _id?: string;
   productId: number;
   name: string;
   image: string;
