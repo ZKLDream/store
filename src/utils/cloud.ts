@@ -151,6 +151,84 @@ export const getMiniProgramCode = async (): Promise<string> => {
   }
 };
 
+export const createBeforeListCollection = async (): Promise<{ success: boolean; collectionName?: string; data?: string }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitBeforeFunctions',
+      data: {
+        type: 'createCollection'
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('创建清单集合失败:', error);
+    return { success: false };
+  }
+};
+
+export const getBeforeList = async (): Promise<any[]> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitBeforeFunctions',
+      data: {
+        type: 'selectRecord'
+      }
+    });
+
+    if (res.result && res.result.data) {
+      return res.result.data;
+    }
+    return [];
+  } catch (error) {
+    console.error('获取清单数据失败:', error);
+    throw error;
+  }
+};
+
+export const updateBeforeList = async (record: any): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitBeforeFunctions',
+      data: {
+        type: 'updateRecord',
+        data: [record]
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('更新清单数据失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
+export const insertBeforeList = async (record: any): Promise<{ success: boolean; data?: any; errMsg?: any }> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitBeforeFunctions',
+      data: {
+        type: 'insertRecord',
+        data: record
+      }
+    });
+
+    if (res.result) {
+      return res.result;
+    }
+    return { success: false };
+  } catch (error) {
+    console.error('插入清单数据失败:', error);
+    return { success: false, errMsg: error };
+  }
+};
+
 export const createCollection = async (): Promise<{ success: boolean; collectionName?: string; data?: string }> => {
   try {
     const res = await Taro.cloud.callFunction({

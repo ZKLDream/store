@@ -3,18 +3,28 @@ import { ListItem, SalesRecord } from '@/types';
 import { storage } from '@/utils/storage';
 import Taro from '@tarojs/taro';
 
+const setListLocal = (list: any[]) => {
+  try {
+    Taro.setStorageSync('fruitList', JSON.stringify(list));
+  } catch (e) {
+    console.error('[Storage] setList local error', e);
+  }
+};
+
 interface AppContextType {
   list: ListItem[];
   salesRecords: SalesRecord[];
   userAvatar: string;
   userName: string;
   salesRecordsLoading: boolean;
+  listLoading: boolean;
   addToList: (productId: number, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
   updateListItemPrice: (itemId: number, price: number) => void;
   updateListItemCostPrice: (itemId: number, costPrice: number) => void;
   removeFromList: (itemId: number) => void;
   clearList: () => void;
+  uploadListToCloud: () => Promise<void>;
   createSalesRecord: () => Promise<void>;
   getListTotal: () => number;
   getListProfit: () => number;
@@ -29,6 +39,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [userName, setUserName] = useState<string>('');
   const [salesRecordsLoading, setSalesRecordsLoading] = useState(true);
+  const [listLoading, setListLoading] = useState(true);
   const [cloudInitialized, setCloudInitialized] = useState(false);
 
   useEffect(() => {
@@ -52,17 +63,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   useEffect(() => {
-    setList(storage.getList());
-    const profile = storage.getUserProfile();
-    setUserAvatar(profile.avatar);
-    setUserName(profile.name);
-  }, []);
-
-  useEffect(() => {
     if (cloudInitialized) {
+      loadList();
       loadSalesRecords();
+      const profile = storage.getUserProfile();
+      setUserAvatar(profile.avatar);
+      setUserName(profile.name);
     }
   }, [cloudInitialized]);
+
+  const loadList = async () => {
+    try {
+      setListLoading(true);
+      const data = await storage.getList();
+      setList(data);
+    } catch (e) {
+      console.error('[AppContext] loadList error', e);
+    } finally {
+      setListLoading(false);
+    }
+  };
 
   const loadSalesRecords = async () => {
     try {
@@ -100,7 +120,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     
     setList(newList);
-    storage.setList(newList);
+    setListLocal(newList);
     Taro.showToast({ title: '已加入清单', icon: 'success' });
   };
 
@@ -113,7 +133,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }).filter(item => item.quantity > 0);
     
     setList(newList);
-    storage.setList(newList);
+    setListLocal(newList);
   };
 
   const updateListItemPrice = (itemId: number, price: number) => {
@@ -125,7 +145,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
     
     setList(newList);
-    storage.setList(newList);
+    setListLocal(newList);
   };
 
   const updateListItemCostPrice = (itemId: number, costPrice: number) => {
@@ -137,18 +157,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
     
     setList(newList);
-    storage.setList(newList);
+    setListLocal(newList);
   };
 
   const removeFromList = (itemId: number) => {
     const newList = list.filter(item => item.id !== itemId);
     setList(newList);
-    storage.setList(newList);
+    setListLocal(newList);
   };
 
   const clearList = () => {
     setList([]);
-    storage.setList([]);
+    setListLocal([]);
+  };
+
+  const uploadListToCloud = async () => {
+    try {
+      await storage.setList(list);
+      Taro.showToast({ title: '上传成功', icon: 'success' });
+    } catch (e) {
+      console.error('[AppContext] uploadListToCloud error', e);
+      Taro.showToast({ title: '上传失败', icon: 'error' });
+    }
   };
 
   const createSalesRecord = async () => {
@@ -188,12 +218,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       userAvatar,
       userName,
       salesRecordsLoading,
+      listLoading,
       addToList,
       updateListItemQuantity,
       updateListItemPrice,
       updateListItemCostPrice,
       removeFromList,
       clearList,
+      uploadListToCloud,
       createSalesRecord,
       getListTotal,
       getListProfit,

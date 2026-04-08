@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, Button } from '@tarojs/components';
 import { useApp } from '@/store/AppContext';
 import CartItem from '@/components/CartItem';
 import styles from './index.module.scss';
 
 const CartPage: React.FC = () => {
-  const { list, updateListItemQuantity, updateListItemPrice, updateListItemCostPrice, getListTotal, getListProfit, createSalesRecord } = useApp();
+  const { list, updateListItemQuantity, updateListItemPrice, updateListItemCostPrice, getListTotal, getListProfit, createSalesRecord, uploadListToCloud } = useApp();
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleCheckout = () => {
     if (list.length === 0) return;
     createSalesRecord();
+  };
+
+  const handleUpload = async () => {
+    if (list.length === 0) return;
+    try {
+      setIsUploading(true);
+      await uploadListToCloud();
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -45,9 +56,14 @@ const CartPage: React.FC = () => {
               <Text className={styles.profitAmount}>¥{getListProfit().toFixed(2)}</Text>
             </View>
           </View>
-          <Button className={styles.checkoutBtn} onClick={handleCheckout}>
-            结算
-          </Button>
+          <View className={styles.buttonGroup}>
+            <Button className={styles.uploadBtn} onClick={handleUpload} disabled={isUploading}>
+              {isUploading ? '上传中...' : '上传'}
+            </Button>
+            <Button className={styles.checkoutBtn} onClick={handleCheckout}>
+              结算
+            </Button>
+          </View>
         </View>
       )}
     </View>
