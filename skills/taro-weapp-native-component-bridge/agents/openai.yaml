@@ -1,0 +1,7 @@
+interface:
+  display_name: "Taro 原生组件混编排障"
+  short_description: "处理 Taro 混编原生小程序组件时的 ESM 转换与构建问题"
+  default_prompt: "Use $taro-weapp-native-component-bridge to diagnose a Taro + 原生小程序组件混编构建或运行错误。"
+
+policy:
+  allow_implicit_invocation: true
