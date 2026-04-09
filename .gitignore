@@ -14,7 +14,6 @@ yarn-error.log*
 .project
 .settings
 *.log
-.trae
 .swc
 
 # 环境变量文件（包含敏感信息）

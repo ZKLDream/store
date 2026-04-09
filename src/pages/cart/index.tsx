@@ -7,10 +7,16 @@ import styles from './index.module.scss';
 const CartPage: React.FC = () => {
   const { list, updateListItemQuantity, updateListItemPrice, updateListItemCostPrice, getListTotal, getListProfit, createSalesRecord, uploadListToCloud } = useApp();
   const [isUploading, setIsUploading] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (list.length === 0) return;
-    createSalesRecord();
+    try {
+      setIsCheckingOut(true);
+      await createSalesRecord();
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   const handleUpload = async () => {
@@ -60,8 +66,8 @@ const CartPage: React.FC = () => {
             <Button className={styles.uploadBtn} onClick={handleUpload} disabled={isUploading}>
               {isUploading ? '上传中...' : '上传'}
             </Button>
-            <Button className={styles.checkoutBtn} onClick={handleCheckout}>
-              结算
+            <Button className={styles.checkoutBtn} onClick={handleCheckout} disabled={isCheckingOut}>
+              {isCheckingOut ? '结算中...' : '结算'}
             </Button>
           </View>
         </View>
