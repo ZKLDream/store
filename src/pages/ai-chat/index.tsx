@@ -62,13 +62,16 @@ const AiChatPage: React.FC = () => {
 
           <View className={styles.chatPanel}>
             <View className={styles.chatPanelBody}>
-              <agent-ui
-                chatMode={chatMode}
-                agentConfig={agentConfig}
-                modelConfig={modelConfig}
-                envShareConfig={envShareConfig}
-                showBotAvatar
-              />
+              <View className={styles.agentHost}>
+                <agent-ui
+                  style={{ flex: 1, height: '100%', minHeight: 0 }}
+                  chatMode={chatMode}
+                  agentConfig={agentConfig}
+                  modelConfig={modelConfig}
+                  envShareConfig={envShareConfig}
+                  showBotAvatar
+                />
+              </View>
             </View>
           </View>
         </View>

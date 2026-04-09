@@ -185,6 +185,7 @@ Component({
               id: "assistant_message_" + Date.now(),
               role: "assistant",
               parts: [{ type: "text", content: normalizedWelcomeMsg }],
+              copyContent: normalizedWelcomeMsg,
             },
           ],
           chatStatus: 0,
@@ -444,6 +445,13 @@ Component({
       if (this.data.showMenu) {
         this.hideMenu();
       }
+    },
+    buildAgentCopyContent(parts = []) {
+      return (parts || [])
+        .filter((part) => part && (part.type === "text" || part.type === "error"))
+        .map((part) => part.content || "")
+        .filter(Boolean)
+        .join("\n\n");
     },
     transformToolName: function (str) {
       if (str) {
@@ -1139,6 +1147,7 @@ Component({
               id: "assistant_message_" + Date.now(),
               role: "assistant",
               parts: [{ type: "text", content: this.data.modelConfig.welcomeMsg || "你好，我是你的 AI 助手，有什么可以帮你的吗？" }],
+              copyContent: this.data.modelConfig.welcomeMsg || "你好，我是你的 AI 助手，有什么可以帮你的吗？",
             },
           ],
           chatStatus: 0,
@@ -2414,6 +2423,7 @@ Component({
             currentParts.push(textPart);
             this.setData({
               [`messages[${currentAiMsgIndex}].parts`]: currentParts,
+              [`messages[${currentAiMsgIndex}].copyContent`]: this.buildAgentCopyContent(currentParts),
             });
             break;
 
@@ -2422,6 +2432,7 @@ Component({
             fullContent += data.delta || "";
             this.setData({
               [`messages[${currentAiMsgIndex}].parts[${currentParts.length - 1}].content`]: fullContent,
+              [`messages[${currentAiMsgIndex}].copyContent`]: this.buildAgentCopyContent(currentParts),
             });
             break;
           // 工具调用开始，push 一个 tool_call 类型的 part
@@ -2471,6 +2482,7 @@ Component({
             currentParts.push(agentErrorPart);
             this.setData({
               [`messages[${currentAiMsgIndex}].parts`]: currentParts,
+              [`messages[${currentAiMsgIndex}].copyContent`]: this.buildAgentCopyContent(currentParts),
             });
             // agent 运行错误直接返回
             return;

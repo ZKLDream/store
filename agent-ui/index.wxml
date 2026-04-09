@@ -66,15 +66,15 @@
         src="./imgs/chat-bubble-add.svg" mode="aspectFill" />
     </view>
   </view>
-  <view style="height: 100%;overflow: auto;position: relative;">
+  <view class="body">
     <!-- 聊天对话区 -->
     <scroll-view bindwheel="onWheel" enhanced="{{true}}" bindscroll="onScroll" binddragstart="handleScrollStart"
-      class="main" style="height: 100%;" scroll-y="{{true}}" scroll-top="{{viewTop}}" scroll-into-view="{{ scrollTo }}"
+      class="main" scroll-y="{{true}}" scroll-top="{{viewTop}}" scroll-into-view="{{ scrollTo }}"
       lower-threshold="1" bindscrolltolower="handleScrollToLower" show-scrollbar="{{false}}"
       refresher-enabled="{{showPullRefresh && (bot.multiConversationEnable ? conversation : true)}}"
       refresher-threshold="{{80}}" bindrefresherrefresh="handleRefresh" refresher-triggered="{{triggered}}"
       bounces="{{false}}">
-      <view class="contentBox" style="margin-bottom: 30px;">
+      <view class="contentBox">
         <!-- 下拉刷新按钮，只在 bot 模式下展示 -->
         <view
           wx:if="{{chatMode === 'bot'&& !isAgent && bot.botId &&  showPullRefresh && (bot.multiConversationEnable ? conversation : true)}}"
@@ -89,7 +89,8 @@
         </view>
         <block wx-if="{{!isAgent}}" wx:for="{{chatRecords}}" wx:key="record_id">
           <!-- 系统聊天 -->
-          <view class="system" style="padding-left: {{showBotAvatar?80:0}}rpx;" wx:if="{{item.role==='assistant'}}">
+          <view class="system" style="padding-left: {{showBotAvatar?80:0}}rpx;" wx:if="{{item.role==='assistant'}}"
+            bind:longpress="handleLongPress" data-id="{{item.record_id}}" data-content="{{item.content}}">
             <view class="avatar-left" wx:if="{{showBotAvatar}}">
               <image src="{{chatMode==='bot'?bot.avatar:modelConfig.logo}}" mode="aspectFill"
                 style="width: 56rpx;height: 56rpx; border-radius: 28rpx;" />
@@ -232,6 +233,13 @@
                 <image wx:if="{{(chatRecords.length - 1) === index && (chatStatus === 2 || chatStatus === 3)}}"
                   mode="widthFix" src='./imgs/loading.svg' style="width: 14px;height: 14px;" />
               </block>
+              <view class="operation-menu assistant-operation-menu"
+                wx:if="{{showMenu && tapMenuRecordId === item.record_id}}">
+                <view class="menu-item" bind:tap="handleCopyAll" data-content="{{item.content}}">
+                  <image src="./imgs/copy.svg" class="menu-icon" />
+                  <text>复制全文</text>
+                </view>
+              </view>
             </view>
           </view>
           <!-- 用户输入 -->
@@ -267,7 +275,8 @@
               <view class="user_content"> {{item.content}}</view>
             </view>
           </view>
-          <view class="system" wx:if="{{item.role==='assistant'}}">
+          <view class="system" wx:if="{{item.role==='assistant'}}" bind:longpress="handleLongPress" data-id="{{item.id}}"
+            data-content="{{item.copyContent}}">
             <!-- 渲染 parts -->
             <block wx:for="{{item.parts}}" wx:for-item="part" wx:key="id">
               <block wx:if="{{part.type==='text'}}">
@@ -282,6 +291,12 @@
                 <view>{{part.content||''}}</view>
               </block>
             </block>
+            <view class="operation-menu assistant-operation-menu" wx:if="{{showMenu && tapMenuRecordId === item.id}}">
+              <view class="menu-item" bind:tap="handleCopyAll" data-content="{{item.copyContent}}">
+                <image src="./imgs/copy.svg" class="menu-icon" />
+                <text>复制全文</text>
+              </view>
+            </view>
           </view>
         </block>
         <!-- 加载图标 -->
