@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const displayName = userName || '用户';
-  const displayId = userInfo?.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
+  const displayId = userInfo && userInfo.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
   return (
     <View className={styles.container}>

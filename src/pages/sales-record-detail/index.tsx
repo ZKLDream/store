@@ -8,7 +8,7 @@ import styles from './index.module.scss';
 const SalesRecordDetailPage: React.FC = () => {
   const { salesRecords } = useApp();
   const router = Taro.getCurrentInstance().router;
-  const id = router?.params?.id ? parseInt(router.params.id) : 0;
+  const id = router && router.params && router.params.id ? parseInt(router.params.id) : 0;
   
   const record = salesRecords.find(r => r.id === id);
 

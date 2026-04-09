@@ -252,7 +252,7 @@ Component({
         // 拉一遍新会话列表
         await this.resetFetchConversationList();
       }
-      if (this.data.bot.voiceSettings?.enable) {
+      if (this.data.bot.voiceSettings && this.data.bot.voiceSettings.enable) {
         // 初始化录音管理器
         await this.initRecordManager();
         // 提前获取语音权限
@@ -334,7 +334,7 @@ Component({
                           path: `bots/${this.data.bot.botId}/speech-to-text`,
                           data: {
                             url: fileList[0].tempFileURL,
-                            engSerViceType: this.data.bot.voiceSettings?.inputType,
+                            engSerViceType: this.data.bot.voiceSettings && this.data.bot.voiceSettings.inputType,
                             voiceFormat: "aac",
                           }, //
                           method: "POST",
@@ -396,7 +396,7 @@ Component({
     },
     handleChangeInputType(e) {
       // 检查当前语音能力权限
-      if (!this.data.bot.voiceSettings?.enable) {
+      if (!this.data.bot.voiceSettings || !this.data.bot.voiceSettings.enable) {
         wx.showModal({
           title: "提示",
           content: "请前往腾讯云开发平台启用语音输入输出能力",
@@ -480,7 +480,7 @@ Component({
       //   pageNumber: this.data.page,
       //   pageSize: this.data.size,
       //   sort: "desc",
-      //   conversationId: this.data.conversation?.conversationId || undefined,
+      //   conversationId: this.data.conversation && this.data.conversation.conversationId || undefined,
       // });
       // if (res.recordList) {
       // }
@@ -614,7 +614,7 @@ Component({
                   transformConversations: that.transformConversationList(updatedConversations),
                 });
 
-                if (that.data.conversation?.conversationId === conversation.conversationId) {
+                if (that.data.conversation && that.data.conversation.conversationId === conversation.conversationId) {
                   that.clearChatRecords();
                   if (updatedConversations.length > 0) {
                     that.handleClickConversation({
@@ -1045,8 +1045,8 @@ Component({
               pageSize: this.data.size,
               sort: "desc",
             };
-            if (this.data.conversation?.conversationId) {
-              getRecordsReq.conversationId = this.data.conversation?.conversationId;
+            if (this.data.conversation && this.data.conversation.conversationId) {
+              getRecordsReq.conversationId = this.data.conversation.conversationId;
             }
             const res = await ai.bot.getChatRecords(getRecordsReq);
             if (res.recordList) {
@@ -1094,9 +1094,10 @@ Component({
                       if (origin_msg_obj.aiResHistory) {
                         const transformToolCallList = this.transformToolCallHistoryList(origin_msg_obj.aiResHistory);
                         transformItem.toolCallList = transformToolCallList;
-                        const toolCallErr = transformToolCallList.find((item) => item.error)?.error;
+                        const foundErr = transformToolCallList.find((item) => item.error);
+                        const toolCallErr = foundErr && foundErr.error;
                         // console.log("toolCallErr", toolCallErr);
-                        if (toolCallErr?.error?.message) {
+                        if (toolCallErr && toolCallErr.error && toolCallErr.error.message) {
                           transformItem.error = toolCallErr.error.message;
                           transformItem.reqId = item.trace_id || "";
                         }
@@ -1526,7 +1527,7 @@ Component({
             searchEnable: this.data.useWebSearch,
           };
 
-          if (this.data.conversation?.conversationId) {
+          if (this.data.conversation && this.data.conversation.conversationId) {
             sendReq.conversationId = this.data.conversation.conversationId;
           }
 
@@ -1602,7 +1603,7 @@ Component({
                   if (typeof error.message === "string") {
                     errToolCallObj = lastValue.toolCallList[lastValue.toolCallList.length - 1];
                   } else {
-                    if (error.message?.toolCallId) {
+                    if (error.message && error.message.toolCallId) {
                       errToolCallObj = lastValue.toolCallList.find((item) => item.id === error.message.toolCallId);
                     }
                   }
@@ -1742,7 +1743,7 @@ Component({
             }
             // 超出token数限制
             if (type === "finish" && finish_reason === "length") {
-              const completionTokens = usage?.completionTokens || 0;
+              const completionTokens = usage && usage.completionTokens || 0;
               lastValue.error = completionTokens
                 ? `当前输出token长度为 ${completionTokens}，已超过最大限制，请重新提问`
                 : "已超过最大限制，请重新提问";
@@ -2019,7 +2020,7 @@ Component({
           header: {},
           data: {
             text: content,
-            voiceType: this.data.bot.voiceSettings?.outputType,
+            voiceType: this.data.bot.voiceSettings && this.data.bot.voiceSettings.outputType,
           },
           method: "POST",
           success: (res) => {
@@ -2079,7 +2080,7 @@ Component({
     handlePlayAudio: async function (e) {
       console.log("handlePlayAudio e", e);
       // 判断是否打开语音能力
-      if (!this.data.bot.voiceSettings?.enable) {
+      if (!this.data.bot.voiceSettings || !this.data.bot.voiceSettings.enable) {
         wx.showModal({
           title: "提示",
           content: "请前往腾讯云开发平台启用语音输入输出能力",
@@ -2367,9 +2368,9 @@ Component({
       } = this.data;
       // 1. UI 预处理,如果是用户消息,则添加一个 AI 占位消息
       const newMessages = [...messages];
-      if (message?.[0]?.role === "user") {
+      if (message && message[0] && message[0].role === "user") {
         const aiMsg = { id: "assistant_message_" + Date.now(), role: "assistant", parts: [] };
-        newMessages.push(message?.[0], aiMsg);
+        newMessages.push(message[0], aiMsg);
         this.setData({
           messages: newMessages,
         });
