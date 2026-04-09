@@ -156,6 +156,8 @@ Component({
   },
   attached: async function () {
     const chatMode = this.data.chatMode;
+    const fallbackWelcomeMsg = "你好，我是你的 AI 助手，有什么可以帮你的吗？";
+    const normalizedWelcomeMsg = this.data.modelConfig.welcomeMsg || fallbackWelcomeMsg;
     // 检查配置
     const [check, message] = checkConfig(chatMode, this.data.agentConfig, this.data.modelConfig);
     if (!check) {
@@ -171,6 +173,22 @@ Component({
     if (chatMode === "bot") {
       const { botId } = this.data.agentConfig;
       if (botId.startsWith("agent")) {
+        this.setData({
+          isAgent: true,
+          agentV2Config: {
+            agentID: botId,
+            tools: this.data.agentConfig.tools || [],
+          },
+          threadId: "threadId_" + Date.now(),
+          messages: [
+            {
+              id: "assistant_message_" + Date.now(),
+              role: "assistant",
+              parts: [{ type: "text", content: normalizedWelcomeMsg }],
+            },
+          ],
+          chatStatus: 0,
+        });
         return;
       }
       const ai = cloudInstance.extend.AI;
@@ -1116,7 +1134,13 @@ Component({
       }
       if (this.data.isAgent) {
         this.setData({
-          messages: [],
+          messages: [
+            {
+              id: "assistant_message_" + Date.now(),
+              role: "assistant",
+              parts: [{ type: "text", content: this.data.modelConfig.welcomeMsg || "你好，我是你的 AI 助手，有什么可以帮你的吗？" }],
+            },
+          ],
           chatStatus: 0,
           threadId: "threadId_" + String(+new Date()),
         });

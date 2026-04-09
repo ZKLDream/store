@@ -49,7 +49,7 @@ const modelConfig: ModelConfig = {
   modelProvider: 'hunyuan-open',
   quickResponseModel: 'hunyuan-lite',
   logo: '',
-  welcomeMsg: '你好，我是你的 AI 助手，有什么可以帮你的吗？',
+  welcomeMsg: '你好，我是水果生成助手。发我一个水果名，我来帮你写简介、卖点文案和配图提示词。',
 };
 
 const envShareConfig: EnvShareConfig | undefined =

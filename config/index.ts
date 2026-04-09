@@ -1,13 +1,51 @@
 import { defineConfig, type UserConfigExport } from '@tarojs/cli';
+import fs from 'fs';
+import path from 'path';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import devConfig from './dev';
 import prodConfig from './prod';
 import vitePluginImp from 'vite-plugin-imp';
+
+function parseEnvFile(filePath: string): Record<string, string> {
+  if (!fs.existsSync(filePath)) {
+    return {};
+  }
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  const env: Record<string, string> = {};
+
+  content.split(/\r?\n/).forEach((line) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith('#')) {
+      return;
+    }
+
+    const separatorIndex = trimmedLine.indexOf('=');
+    if (separatorIndex === -1) {
+      return;
+    }
+
+    const key = trimmedLine.slice(0, separatorIndex).trim();
+    const rawValue = trimmedLine.slice(separatorIndex + 1).trim();
+    const normalizedValue = rawValue.replace(/^(['"])(.*)\1$/, '$2');
+
+    env[key] = normalizedValue;
+  });
+
+  return env;
+}
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
-  const aiBotId = JSON.stringify(process.env.TARO_AI_BOT_ID || '');
-  const aiResourceAppid = JSON.stringify(process.env.TARO_AI_RESOURCE_APPID || '');
-  const aiResourceEnv = JSON.stringify(process.env.TARO_AI_RESOURCE_ENV || '');
+  const projectRoot = path.resolve(__dirname, '..');
+  const fileEnv = {
+    ...parseEnvFile(path.join(projectRoot, '.env')),
+    ...parseEnvFile(path.join(projectRoot, '.env.local')),
+  };
+  const resolveEnvValue = (key: string) => process.env[key] || fileEnv[key] || '';
+
+  const aiBotId = JSON.stringify(resolveEnvValue('TARO_AI_BOT_ID'));
+  const aiResourceAppid = JSON.stringify(resolveEnvValue('TARO_AI_RESOURCE_APPID'));
+  const aiResourceEnv = JSON.stringify(resolveEnvValue('TARO_AI_RESOURCE_ENV'));
 
   const baseConfig: UserConfigExport<'webpack5'> = {
     projectName: 'taro_template',
