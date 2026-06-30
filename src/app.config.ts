@@ -6,13 +6,19 @@ export default defineAppConfig({
     'pages/sales-record-list/index',
     'pages/sales-record-detail/index',
     'pages/product-management/index',
-    'pages/ai-chat/index'
+    'pages/ai-chat/index',
+    'pages/video-dewatermark/index'
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#667eea',
     navigationBarTitleText: '水果店记账本',
     navigationBarTextStyle: 'white'
+  },
+  permission: {
+    'scope.writePhotosAlbum': {
+      desc: '用于将去水印后的视频保存到您的相册'
+    }
   },
   tabBar: {
     custom: true,

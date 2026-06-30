@@ -80,6 +80,12 @@ const ProfilePage: React.FC = () => {
     });
   };
 
+  const handleGoToVideoDewatermark = () => {
+    Taro.navigateTo({
+      url: '/pages/video-dewatermark/index'
+    });
+  };
+
   const displayName = userName || '用户';
   const displayId = userInfo && userInfo.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
@@ -123,6 +129,17 @@ const ProfilePage: React.FC = () => {
             <View className={styles.entranceInfo}>
               <Text className={styles.entranceTitle}>商品管理</Text>
               <Text className={styles.entranceDesc}>编辑商品信息</Text>
+            </View>
+          </View>
+          <Text className={styles.entranceArrow}>›</Text>
+        </View>
+
+        <View className={styles.entranceCard} onClick={handleGoToVideoDewatermark}>
+          <View className={styles.entranceLeft}>
+            <Text className={styles.entranceIcon}>🎬</Text>
+            <View className={styles.entranceInfo}>
+              <Text className={styles.entranceTitle}>抖音小红书B站去水印</Text>
+              <Text className={styles.entranceDesc}>解析无水印视频</Text>
             </View>
           </View>
           <Text className={styles.entranceArrow}>›</Text>
