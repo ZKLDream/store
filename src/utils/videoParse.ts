@@ -130,7 +130,10 @@ export const pickDownloadUrls = (response: DirectUrlResolveResponse | null | und
   return pickList(response.direct_url, response.direct_urls);
 };
 
-export const buildResultLines = (response: DirectUrlResolveResponse | null | undefined): ResultLine[] => {
+export const buildResultLines = (
+  response: DirectUrlResolveResponse | null | undefined,
+  debug = false
+): ResultLine[] => {
   if (!response) {
     return [];
   }
@@ -145,16 +148,19 @@ export const buildResultLines = (response: DirectUrlResolveResponse | null | und
 
   push('状态', typeof response.ok === 'boolean' ? (response.ok ? '成功' : '失败') : undefined);
   push('标题', response.title);
-  push('video_id', response.video_id);
-  push('来源', response.source);
-  push('输入链接', response.input_url);
-  push('跳转后链接', response.resolved_url);
 
-  const directUrls = pickList(response.direct_url, response.direct_urls);
-  if (directUrls.length > 1) {
-    directUrls.forEach((url, index) => push(`直链 ${index + 1}`, url));
-  } else if (directUrls.length === 1) {
-    push('视频直链', directUrls[0]);
+  if (debug) {
+    push('video_id', response.video_id);
+    push('来源', response.source);
+    push('输入链接', response.input_url);
+    push('跳转后链接', response.resolved_url);
+
+    const directUrls = pickList(response.direct_url, response.direct_urls);
+    if (directUrls.length > 1) {
+      directUrls.forEach((url, index) => push(`直链 ${index + 1}`, url));
+    } else if (directUrls.length === 1) {
+      push('视频直链', directUrls[0]);
+    }
   }
 
   const finalUrls = pickList(response.final_url, response.final_urls);

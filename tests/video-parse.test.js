@@ -7,6 +7,7 @@ const {
   buildDouyinListEndpoint,
   parseDouyinListValue,
   isAiAssistantApproved,
+  isDouyinDebugEnabled,
   normalizeShareUrl,
   pickDownloadUrls,
   buildResultLines,
@@ -99,20 +100,31 @@ test('pickDownloadUrls prefers final urls then direct urls', () => {
   assert.deepEqual(pickDownloadUrls(null), []);
 });
 
-test('buildResultLines mirrors single and multi stream display', () => {
-  const single = buildResultLines({
+test('buildResultLines default shows only status, title, download url', () => {
+  const sample = {
     ok: true,
     title: '测试视频',
     video_id: '123',
     source: 'douyin',
+    input_url: 'https://in',
+    resolved_url: 'https://resolved',
     direct_url: 'https://d',
     final_url: 'https://f',
-  });
-  assert.deepEqual(single, [
+  };
+
+  assert.deepEqual(buildResultLines(sample), [
+    { label: '状态', value: '成功' },
+    { label: '标题', value: '测试视频' },
+    { label: '下载直链', value: 'https://f' },
+  ]);
+
+  assert.deepEqual(buildResultLines(sample, true), [
     { label: '状态', value: '成功' },
     { label: '标题', value: '测试视频' },
     { label: 'video_id', value: '123' },
     { label: '来源', value: 'douyin' },
+    { label: '输入链接', value: 'https://in' },
+    { label: '跳转后链接', value: 'https://resolved' },
     { label: '视频直链', value: 'https://d' },
     { label: '下载直链', value: 'https://f' },
   ]);
@@ -126,4 +138,15 @@ test('buildResultLines mirrors single and multi stream display', () => {
   ]);
 
   assert.deepEqual(buildResultLines(null), []);
+});
+
+test('isDouyinDebugEnabled only true when douyin_debug=1 present', () => {
+  assert.equal(isDouyinDebugEnabled({ value: 'douyin_debug=1' }), true);
+  assert.equal(
+    isDouyinDebugEnabled({ value: 'approve_douyin_you=1,douyin_debug=1' }),
+    true
+  );
+  assert.equal(isDouyinDebugEnabled({ value: 'douyin_debug=0' }), false);
+  assert.equal(isDouyinDebugEnabled({ value: 'approve_douyin_you=1' }), false);
+  assert.equal(isDouyinDebugEnabled(null), false);
 });

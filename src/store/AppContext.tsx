@@ -6,6 +6,7 @@ import {
   DEFAULT_PARSE_BASE_URL,
   buildDouyinListEndpoint,
   isAiAssistantApproved,
+  isDouyinDebugEnabled,
   DouyinListResponse,
 } from '@/utils/videoParse';
 import Taro from '@tarojs/taro';
@@ -18,6 +19,7 @@ interface AppContextType {
   salesRecordsLoading: boolean;
   listLoading: boolean;
   aiAssistantEnabled: boolean;
+  douyinDebugEnabled: boolean;
   addToList: (productId: number, fruitId: string | undefined, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
   updateListItemPrice: (itemId: number, price: number) => void;
@@ -42,6 +44,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [listLoading, setListLoading] = useState(true);
   const [cloudInitialized, setCloudInitialized] = useState(false);
   const [aiAssistantEnabled, setAiAssistantEnabled] = useState(false);
+  const [douyinDebugEnabled, setDouyinDebugEnabled] = useState(false);
 
   useEffect(() => {
     Taro.request({
@@ -51,7 +54,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     })
       .then((res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          setAiAssistantEnabled(isAiAssistantApproved(res.data as DouyinListResponse));
+          const data = res.data as DouyinListResponse;
+          setAiAssistantEnabled(isAiAssistantApproved(data));
+          setDouyinDebugEnabled(isDouyinDebugEnabled(data));
         }
       })
       .catch(() => {
@@ -258,6 +263,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       salesRecordsLoading,
       listLoading,
       aiAssistantEnabled,
+      douyinDebugEnabled,
       addToList,
       updateListItemQuantity,
       updateListItemPrice,

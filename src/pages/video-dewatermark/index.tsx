@@ -11,12 +11,14 @@ import {
   ResultLine,
 } from '@/utils/videoParse';
 import { downloadVideoToCloud, getTempFileUrl } from '@/utils/cloud';
+import { useApp } from '@/store/AppContext';
 import styles from './index.module.scss';
 
 const PAGE_TITLE = '视频去水印';
 const PAGE_SUBTITLE = '抖音 · 小红书 · B站 一键去水印';
 
 const VideoDewatermarkPage: React.FC = () => {
+  const { douyinDebugEnabled } = useApp();
   const [shareText, setShareText] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -50,7 +52,7 @@ const VideoDewatermarkPage: React.FC = () => {
         throw new Error(`解析失败，HTTP ${res.statusCode}`);
       }
 
-      const lines = buildResultLines(data);
+      const lines = buildResultLines(data, douyinDebugEnabled);
       if (data.ok === false && lines.length === 0) {
         throw new Error(data.message || '解析失败，请稍后再试');
       }
