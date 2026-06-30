@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text } from '@tarojs/components';
-import { useDidShow } from '@tarojs/taro';
-import { specs, fetchFruitsData, getCategoriesFromData } from '@/data/fruits';
+import Taro, { useDidHide, useDidShow } from '@tarojs/taro';
+import { fetchFruitsData, getCategoriesFromData } from '@/data/fruits';
 import ProductCard from '@/components/ProductCard';
+import VideoPreviewModal from '@/components/VideoPreviewModal';
 import { useApp } from '@/store/AppContext';
+import { getTempFileUrl } from '@/utils/cloud';
+import { getProductVideoFileId } from '@/utils/productMedia';
 import { Fruit } from '@/types';
 import styles from './index.module.scss';
 
@@ -13,6 +16,8 @@ const HomePage: React.FC = () => {
   const [currentCategory, setCurrentCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [previewFruit, setPreviewFruit] = useState<Fruit | null>(null);
+  const [previewVideoUrl, setPreviewVideoUrl] = useState('');
   const { addToList } = useApp();
 
   useEffect(() => {
@@ -21,6 +26,10 @@ const HomePage: React.FC = () => {
 
   useDidShow(() => {
     loadFruitsData();
+  });
+
+  useDidHide(() => {
+    handleClosePreview();
   });
 
   const loadFruitsData = async () => {
@@ -49,6 +58,33 @@ const HomePage: React.FC = () => {
     if (fruit) {
       addToList(productId, fruit._id, fruit.name, fruit.image, `${weight}斤`, unitPrice, unitCostPrice, quantity);
     }
+  };
+
+  const handlePreviewVideo = async (fruit: Fruit) => {
+    const fileId = getProductVideoFileId(fruit);
+    if (!fileId) {
+      return;
+    }
+
+    try {
+      Taro.showLoading({ title: '加载视频...' });
+      const videoUrl = await getTempFileUrl(fileId);
+      setPreviewFruit(fruit);
+      setPreviewVideoUrl(videoUrl);
+    } catch (err) {
+      console.error('加载视频失败:', err);
+      Taro.showToast({
+        title: '视频加载失败',
+        icon: 'none'
+      });
+    } finally {
+      Taro.hideLoading();
+    }
+  };
+
+  const handleClosePreview = () => {
+    setPreviewFruit(null);
+    setPreviewVideoUrl('');
   };
 
   if (loading) {
@@ -91,9 +127,17 @@ const HomePage: React.FC = () => {
             key={fruit.id}
             fruit={fruit}
             onAddToList={(weight, unitPrice, unitCostPrice, quantity) => handleAddToList(fruit.id, weight, unitPrice, unitCostPrice, quantity)}
+            onPreviewVideo={handlePreviewVideo}
           />
         ))}
       </ScrollView>
+
+      <VideoPreviewModal
+        visible={Boolean(previewFruit && previewVideoUrl)}
+        title={previewFruit?.name || '商品视频'}
+        videoUrl={previewVideoUrl}
+        onClose={handleClosePreview}
+      />
     </View>
   );
 };

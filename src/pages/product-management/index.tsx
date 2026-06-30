@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, Input, Textarea } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { Fruit } from '@/types';
-import { getFruitsData, updateFruit, deleteFruit, uploadImage, insertFruit } from '@/utils/cloud';
+import VideoPreviewModal from '@/components/VideoPreviewModal';
+import { getFruitsData, updateFruit, deleteFruit, uploadImage, insertFruit, uploadVideo, getTempFileUrl } from '@/utils/cloud';
+import { getProductVideoFileId, hasProductVideo } from '@/utils/productMedia';
 import styles from './index.module.scss';
 
 const ProductManagementPage: React.FC = () => {
@@ -13,6 +15,8 @@ const ProductManagementPage: React.FC = () => {
   const [editData, setEditData] = useState<Partial<Fruit>>({});
   const [saving, setSaving] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewVideoUrl, setPreviewVideoUrl] = useState('');
 
   useEffect(() => {
     loadProducts();
@@ -40,7 +44,8 @@ const ProductManagementPage: React.FC = () => {
     setEditData({
       ...product,
       price: product.price.toString(),
-      costPrice: product.costPrice.toString()
+      costPrice: product.costPrice.toString(),
+      video: product.video || ''
     });
     setShowModal(true);
   };
@@ -54,7 +59,8 @@ const ProductManagementPage: React.FC = () => {
       desc: '',
       price: '0',
       costPrice: '0',
-      image: ''
+      image: '',
+      video: ''
     });
     setShowModal(true);
   };
@@ -64,6 +70,11 @@ const ProductManagementPage: React.FC = () => {
     setSelectedProduct(null);
     setEditData({});
     setIsAdding(false);
+  };
+
+  const handleCloseVideoPreview = () => {
+    setPreviewTitle('');
+    setPreviewVideoUrl('');
   };
 
   const handleInputChange = (field: keyof Fruit, value: any) => {
@@ -101,6 +112,68 @@ const ProductManagementPage: React.FC = () => {
     }
   };
 
+  const handleVideoUpload = async () => {
+    try {
+      const res = await Taro.chooseMedia({
+        count: 1,
+        mediaType: ['video'],
+        sourceType: ['album', 'camera'],
+        maxDuration: 60
+      });
+
+      const file = res.tempFiles?.[0] as { tempFilePath?: string } | undefined;
+      if (!file?.tempFilePath) {
+        return;
+      }
+
+      Taro.showLoading({ title: '上传中...' });
+      const fileId = await uploadVideo(file.tempFilePath);
+      setEditData(prev => ({ ...prev, video: fileId }));
+      Taro.hideLoading();
+      Taro.showToast({
+        title: '上传成功',
+        icon: 'success'
+      });
+    } catch (error) {
+      console.error('上传视频失败:', error);
+      Taro.hideLoading();
+      Taro.showToast({
+        title: '上传失败',
+        icon: 'none'
+      });
+    }
+  };
+
+  const handleClearVideo = () => {
+    setEditData(prev => ({ ...prev, video: '' }));
+  };
+
+  const handlePreviewVideo = async () => {
+    const fileId = getProductVideoFileId(editData);
+    if (!fileId) {
+      Taro.showToast({
+        title: '暂无视频',
+        icon: 'none'
+      });
+      return;
+    }
+
+    try {
+      Taro.showLoading({ title: '加载视频...' });
+      const videoUrl = await getTempFileUrl(fileId);
+      setPreviewTitle(editData.name || selectedProduct?.name || '商品视频');
+      setPreviewVideoUrl(videoUrl);
+    } catch (error) {
+      console.error('预览视频失败:', error);
+      Taro.showToast({
+        title: '视频加载失败',
+        icon: 'none'
+      });
+    } finally {
+      Taro.hideLoading();
+    }
+  };
+
   const handleSave = async () => {
     if (!editData.name || !editData.category) {
       Taro.showToast({
@@ -123,7 +196,8 @@ const ProductManagementPage: React.FC = () => {
           desc: editData.desc || '',
           price: price,
           costPrice: costPrice,
-          image: editData.image || ''
+          image: editData.image || '',
+          video: editData.video || ''
         });
 
         if (result.success && result.data) {
@@ -156,7 +230,8 @@ const ProductManagementPage: React.FC = () => {
           desc: editData.desc || selectedProduct.desc,
           price: price,
           costPrice: costPrice,
-          image: editData.image || selectedProduct.image
+          image: editData.image || selectedProduct.image,
+          video: editData.video || selectedProduct.video || ''
         };
 
         const result = await updateFruit([updatedProduct]);
@@ -375,6 +450,30 @@ const ProductManagementPage: React.FC = () => {
                   </View>
                 </View>
               </View>
+
+              <View className={styles.formGroup}>
+                <Text className={styles.formLabel}>商品视频</Text>
+                <View className={styles.videoPanel}>
+                  <Text className={styles.videoStatus}>
+                    {hasProductVideo(editData) ? '已上传视频' : '未上传视频'}
+                  </Text>
+                  <View className={styles.videoActions}>
+                    <View className={styles.uploadButton} onClick={handleVideoUpload}>
+                      {hasProductVideo(editData) ? '重新选择' : '选择视频'}
+                    </View>
+                    {hasProductVideo(editData) && (
+                      <>
+                        <View className={styles.secondaryButton} onClick={handlePreviewVideo}>
+                          预览视频
+                        </View>
+                        <View className={styles.dangerButton} onClick={handleClearVideo}>
+                          清除视频
+                        </View>
+                      </>
+                    )}
+                  </View>
+                </View>
+              </View>
             </View>
             <View className={styles.modalFooter}>
               {!isAdding && (
@@ -392,6 +491,13 @@ const ProductManagementPage: React.FC = () => {
           </View>
         </View>
       )}
+
+      <VideoPreviewModal
+        visible={Boolean(previewVideoUrl)}
+        title={previewTitle || '商品视频'}
+        videoUrl={previewVideoUrl}
+        onClose={handleCloseVideoPreview}
+      />
     </View>
   );
 };

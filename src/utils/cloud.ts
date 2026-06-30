@@ -94,6 +94,60 @@ export const uploadImage = async (filePath: string): Promise<string> => {
   }
 };
 
+export const uploadVideo = async (filePath: string): Promise<string> => {
+  try {
+    const extension = filePath.split('.').pop() || 'mp4';
+    const cloudPath = `fruit-videos/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${extension}`;
+    const res = await Taro.cloud.uploadFile({
+      cloudPath,
+      filePath
+    });
+    return res.fileID;
+  } catch (error) {
+    console.error('上传视频失败:', error);
+    throw error;
+  }
+};
+
+export const downloadVideoToCloud = async (url: string): Promise<string> => {
+  try {
+    const res = await Taro.cloud.callFunction({
+      name: 'fruitFunctions',
+      data: {
+        type: 'downloadVideoToCloud',
+        url
+      }
+    });
+
+    const result = res.result as { success?: boolean; fileID?: string; errMsg?: string } | undefined;
+    if (result?.success && result.fileID) {
+      return result.fileID;
+    }
+    throw new Error(result?.errMsg || '转存视频失败');
+  } catch (error) {
+    console.error('转存视频到云存储失败:', error);
+    throw error;
+  }
+};
+
+export const getTempFileUrl = async (fileId: string): Promise<string> => {
+  try {
+    const res = await Taro.cloud.getTempFileURL({
+      fileList: [fileId]
+    });
+    const file = res.fileList?.[0] as { tempFileURL?: string } | undefined;
+
+    if (!file?.tempFileURL) {
+      throw new Error('获取临时文件地址失败');
+    }
+
+    return file.tempFileURL;
+  } catch (error) {
+    console.error('获取临时文件地址失败:', error);
+    throw error;
+  }
+};
+
 export interface UserInfo {
   openid: string;
   appid: string;

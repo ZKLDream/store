@@ -7,6 +7,7 @@ export interface Fruit {
   price: number;
   costPrice: number;
   image: string;
+  video?: string;
 }
 
 export interface ListItem {

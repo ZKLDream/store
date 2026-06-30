@@ -253,6 +253,45 @@
   color: $color-text-white;
   border-radius: $radius-md;
   font-size: $font-size-md;
+  text-align: center;
+}
+
+.videoPanel {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  background: $color-bg-page;
+}
+
+.videoStatus {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.videoActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.secondaryButton,
+.dangerButton {
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  text-align: center;
+}
+
+.secondaryButton {
+  background: $color-bg-hover;
+  color: $color-text-primary;
+}
+
+.dangerButton {
+  background: rgba(239, 68, 68, 0.12);
+  color: $color-error;
 }
 
 .modalFooter {

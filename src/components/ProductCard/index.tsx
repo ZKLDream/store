@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Button, Input } from '@tarojs/components';
 import { Fruit } from '@/types';
+import { hasProductVideo } from '@/utils/productMedia';
 import styles from './index.module.scss';
 
 interface ProductCardProps {
   fruit: Fruit;
   onAddToList: (weight: number, unitPrice: number, unitCostPrice: number, quantity: number) => void;
+  onPreviewVideo?: (fruit: Fruit) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   fruit,
-  onAddToList
+  onAddToList,
+  onPreviewVideo
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [weight, setWeight] = useState('1');
   const [inputWeight, setInputWeight] = useState('1');
+  const videoEnabled = hasProductVideo(fruit);
 
   const handleOpenModal = () => {
     setInputWeight(weight);
@@ -35,12 +39,22 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <View className={styles.productCard}>
-      <Image
-        className={styles.productImage}
-        src={fruit.image}
-        mode='aspectFill'
-        lazyLoad
-      />
+      <View
+        className={`${styles.productImageWrapper} ${videoEnabled ? styles.productImageWrapperClickable : ''}`}
+        onClick={() => videoEnabled && onPreviewVideo?.(fruit)}
+      >
+        <Image
+          className={styles.productImage}
+          src={fruit.image}
+          mode='aspectFill'
+          lazyLoad
+        />
+        {videoEnabled && (
+          <View className={styles.playBadge}>
+            <Text className={styles.playIcon}>▶</Text>
+          </View>
+        )}
+      </View>
       <View className={styles.productInfo}>
         <View>
           <Text className={styles.productName}>{fruit.name}</Text>

@@ -10,12 +10,40 @@
   gap: $spacing-md;
 }
 
+.productImageWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.productImageWrapperClickable {
+  cursor: pointer;
+}
+
 .productImage {
   width: 200rpx;
   height: 200rpx;
   border-radius: $radius-sm;
   background: $color-border;
   flex-shrink: 0;
+}
+
+.playBadge {
+  position: absolute;
+  right: $spacing-sm;
+  bottom: $spacing-sm;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.68);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playIcon {
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  transform: translateX(2rpx);
 }
 
 .productInfo {
