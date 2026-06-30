@@ -155,8 +155,22 @@ const VideoDewatermarkPage: React.FC = () => {
       await Taro.saveVideoToPhotosAlbum({ filePath: localPath });
       Taro.showToast({ title: '已保存到相册', icon: 'success' });
     } catch (error) {
+      Taro.hideLoading();
       const message = error instanceof Error ? error.message : '保存失败，请稍后再试';
-      Taro.showToast({ title: message, icon: 'none' });
+      const modal = await Taro.showModal({
+        title: '保存失败',
+        content: `${message}\n可能是视频过大，可复制下方下载直链到浏览器手动下载。`,
+        confirmText: '复制直链',
+        cancelText: '取消',
+      });
+      if (modal.confirm) {
+        Taro.setClipboardData({
+          data: previewUrl,
+          success: () => {
+            Taro.showToast({ title: '直链已复制，请到浏览器打开', icon: 'none' });
+          },
+        });
+      }
     } finally {
       Taro.hideLoading();
       setSaving(false);
