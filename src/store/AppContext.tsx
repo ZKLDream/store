@@ -2,6 +2,12 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { ListItem, SalesRecord } from '@/types';
 import { storage } from '@/utils/storage';
 import { getBeforeList, deleteBeforeListRecord } from '@/utils/cloud';
+import {
+  DEFAULT_PARSE_BASE_URL,
+  buildDouyinListEndpoint,
+  isAiAssistantApproved,
+  DouyinListResponse,
+} from '@/utils/videoParse';
 import Taro from '@tarojs/taro';
 
 interface AppContextType {
@@ -11,6 +17,7 @@ interface AppContextType {
   userName: string;
   salesRecordsLoading: boolean;
   listLoading: boolean;
+  aiAssistantEnabled: boolean;
   addToList: (productId: number, fruitId: string | undefined, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
   updateListItemPrice: (itemId: number, price: number) => void;
@@ -34,6 +41,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [salesRecordsLoading, setSalesRecordsLoading] = useState(true);
   const [listLoading, setListLoading] = useState(true);
   const [cloudInitialized, setCloudInitialized] = useState(false);
+  const [aiAssistantEnabled, setAiAssistantEnabled] = useState(false);
+
+  useEffect(() => {
+    Taro.request({
+      url: buildDouyinListEndpoint(DEFAULT_PARSE_BASE_URL),
+      method: 'GET',
+      timeout: 30000,
+    })
+      .then((res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          setAiAssistantEnabled(isAiAssistantApproved(res.data as DouyinListResponse));
+        }
+      })
+      .catch(() => {
+        // 配置接口失败时保持默认不显示
+      });
+  }, []);
 
   useEffect(() => {
     const initCloud = async () => {
@@ -233,6 +257,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       userName,
       salesRecordsLoading,
       listLoading,
+      aiAssistantEnabled,
       addToList,
       updateListItemQuantity,
       updateListItemPrice,

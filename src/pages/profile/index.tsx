@@ -7,7 +7,7 @@ import { getUserOpenId, UserInfo, createCollection, getMiniProgramCode } from '@
 import styles from './index.module.scss';
 
 const ProfilePage: React.FC = () => {
-  const { userAvatar, userName, salesRecords } = useApp();
+  const { userAvatar, userName, salesRecords, aiAssistantEnabled } = useApp();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -145,16 +145,18 @@ const ProfilePage: React.FC = () => {
           <Text className={styles.entranceArrow}>›</Text>
         </View>
 
-        <View className={styles.entranceCard} onClick={handleGoToAiChat}>
-          <View className={styles.entranceLeft}>
-            <Text className={styles.entranceIcon}>🤖</Text>
-            <View className={styles.entranceInfo}>
-              <Text className={styles.entranceTitle}>AI 助手</Text>
-              <Text className={styles.entranceDesc}>智能对话、生成图片</Text>
+        {aiAssistantEnabled ? (
+          <View className={styles.entranceCard} onClick={handleGoToAiChat}>
+            <View className={styles.entranceLeft}>
+              <Text className={styles.entranceIcon}>🤖</Text>
+              <View className={styles.entranceInfo}>
+                <Text className={styles.entranceTitle}>AI 助手</Text>
+                <Text className={styles.entranceDesc}>智能对话、生成图片</Text>
+              </View>
             </View>
+            <Text className={styles.entranceArrow}>›</Text>
           </View>
-          <Text className={styles.entranceArrow}>›</Text>
-        </View>
+        ) : null}
 
         <View className={styles.qrCodeSection}>
           <Text className={styles.introTitle}>小程序码</Text>

@@ -4,6 +4,9 @@ const assert = require('node:assert/strict');
 const {
   DEFAULT_PARSE_BASE_URL,
   buildDirectUrlEndpoint,
+  buildDouyinListEndpoint,
+  parseDouyinListValue,
+  isAiAssistantApproved,
   normalizeShareUrl,
   pickDownloadUrls,
   buildResultLines,
@@ -22,6 +25,49 @@ test('buildDirectUrlEndpoint appends api path and normalizes trailing slash', ()
     buildDirectUrlEndpoint('  '),
     `${DEFAULT_PARSE_BASE_URL}api/douyin/direct-url`
   );
+});
+
+test('buildDouyinListEndpoint appends api/douyinList and normalizes slash', () => {
+  assert.equal(
+    buildDouyinListEndpoint('https://example.com'),
+    'https://example.com/api/douyinList'
+  );
+  assert.equal(
+    buildDouyinListEndpoint('https://example.com/'),
+    'https://example.com/api/douyinList'
+  );
+  assert.equal(buildDouyinListEndpoint(''), `${DEFAULT_PARSE_BASE_URL}api/douyinList`);
+});
+
+test('parseDouyinListValue splits comma-separated key=value config', () => {
+  assert.deepEqual(
+    parseDouyinListValue({ ok: true, value: 'approve_douyin_you=1,douyin_detail=1' }),
+    [
+      { key: 'approve_douyin_you', value: '1' },
+      { key: 'douyin_detail', value: '1' },
+    ]
+  );
+  assert.deepEqual(
+    parseDouyinListValue({ value: ' a = b , flag ' }),
+    [
+      { key: 'a', value: 'b' },
+      { key: 'flag', value: '' },
+    ]
+  );
+  assert.deepEqual(parseDouyinListValue({ value: '' }), []);
+  assert.deepEqual(parseDouyinListValue(null), []);
+});
+
+test('isAiAssistantApproved only true when approve_douyin_you=1 present', () => {
+  assert.equal(
+    isAiAssistantApproved({ ok: true, value: 'approve_douyin_you=1,douyin_detail=1' }),
+    true
+  );
+  assert.equal(isAiAssistantApproved({ value: 'douyin_detail=1' }), false);
+  assert.equal(isAiAssistantApproved({ value: 'approve_douyin_you=0' }), false);
+  assert.equal(isAiAssistantApproved({ value: 'approve_douyin_you=1' }), true);
+  assert.equal(isAiAssistantApproved({ value: '' }), false);
+  assert.equal(isAiAssistantApproved(null), false);
 });
 
 test('normalizeShareUrl extracts a clean url from share text', () => {

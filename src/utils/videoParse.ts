@@ -28,6 +28,64 @@ export const buildDirectUrlEndpoint = (baseUrl: string): string => {
   return `${normalized}api/douyin/direct-url`;
 };
 
+export const buildDouyinListEndpoint = (baseUrl: string): string => {
+  const trimmed = (baseUrl || '').trim() || DEFAULT_PARSE_BASE_URL;
+  const normalized = trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+  return `${normalized}api/douyinList`;
+};
+
+export interface DouyinListResponse {
+  ok?: boolean;
+  value?: string;
+}
+
+export interface DouyinListConfigItem {
+  key: string;
+  value: string;
+}
+
+export const parseDouyinListValue = (
+  response: DouyinListResponse | null | undefined
+): DouyinListConfigItem[] => {
+  const raw = (response && response.value) || '';
+  if (!raw.trim()) {
+    return [];
+  }
+
+  return raw
+    .split(',')
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0)
+    .map((segment) => {
+      const index = segment.indexOf('=');
+      if (index === -1) {
+        return { key: segment, value: '' };
+      }
+      return {
+        key: segment.slice(0, index).trim(),
+        value: segment.slice(index + 1).trim(),
+      };
+    })
+    .filter((item) => item.key.length > 0);
+};
+
+export const isAiAssistantApproved = (
+  response: DouyinListResponse | null | undefined
+): boolean => {
+  return parseDouyinListValue(response).some(
+    (item) => item.key === 'approve_douyin_you' && item.value === '1'
+  );
+};
+
+export const isDouyinDebugEnabled = (
+  response: DouyinListResponse | null | undefined
+): boolean => {
+  return parseDouyinListValue(response).some(
+    (item) => item.key === 'douyin_debug' && item.value === '1'
+  );
+};
+
+
 export const normalizeShareUrl = (raw: string): string | null => {
   const trimmed = (raw || '').trim();
   if (!trimmed) {
