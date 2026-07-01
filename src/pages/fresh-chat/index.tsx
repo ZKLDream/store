@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, Textarea } from '@tarojs/components';
 import Taro, { useDidShow } from '@tarojs/taro';
+import { useApp } from '@/store/AppContext';
 import {
   getClientId,
   getStoredSessionId,
@@ -34,7 +35,7 @@ const starterPrompts = [
   '总结一下今天对话里的重点结论',
 ];
 
-const FreshChatPage: React.FC = () => {
+const ChatConversation: React.FC = () => {
   const clientId = useMemo(() => getClientId(), []);
   const messageIdRef = useRef(2);
 
@@ -266,6 +267,72 @@ const FreshChatPage: React.FC = () => {
       </View>
     </View>
   );
+};
+
+const AssistantPlaceholder: React.FC = () => {
+  const backBtnTop = useMemo(() => {
+    try {
+      const rect = Taro.getMenuButtonBoundingClientRect();
+      if (rect && rect.top > 0) {
+        return rect.top;
+      }
+    } catch (e) {}
+    try {
+      const sys = Taro.getSystemInfoSync();
+      return (sys.statusBarHeight || 20) + 8;
+    } catch (e) {}
+    return 44;
+  }, []);
+
+  const tips = [
+    { icon: '🧾', title: '当天当天记', desc: '每笔进货、销售当天录入，月底对账不再翻记忆。' },
+    { icon: '⚖️', title: '进价与售价分开填', desc: '毛利一眼看清，哪款水果最赚心里有数。' },
+    { icon: '🍊', title: '临期先卖', desc: '按到货时间排序，先进先出，减少损耗。' },
+    { icon: '📈', title: '看周汇总', desc: '在销售记录里看走势，安排下周进货更有底。' },
+  ];
+
+  return (
+    <View className={styles.page}>
+      <View className={styles.topbar} style={{ paddingTop: `${backBtnTop}px` }}>
+        <View className={styles.backBtn} onClick={() => Taro.navigateBack()}>
+          <Text className={styles.backArrow}>‹</Text>
+          <Text className={styles.backLabel}>返回</Text>
+        </View>
+        <View className={styles.titleWrap}>
+          <Text className={styles.title}>清风助手</Text>
+          <Text className={styles.subtitle}>水果店经营小帮手</Text>
+        </View>
+        <View className={styles.statusPill}>
+          <View className={styles.statusDot} />
+          <Text className={styles.statusText}>已就绪</Text>
+        </View>
+      </View>
+
+      <ScrollView className={styles.messages} scrollY>
+        <View className={styles.welcome}>
+          <Text className={styles.welcomeTitle}>把每天的账记清楚，生意更省心。</Text>
+          <Text className={styles.welcomeText}>
+            这里汇集了小店日常记账与经营的实用小贴士，帮你把记录做得更顺手。
+          </Text>
+        </View>
+
+        {tips.map((tip) => (
+          <View key={tip.title} className={styles.tipCard}>
+            <Text className={styles.tipIcon}>{tip.icon}</Text>
+            <View className={styles.tipBody}>
+              <Text className={styles.tipTitle}>{tip.title}</Text>
+              <Text className={styles.tipDesc}>{tip.desc}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+const FreshChatPage: React.FC = () => {
+  const { douyinDebugEnabled } = useApp();
+  return douyinDebugEnabled ? <ChatConversation /> : <AssistantPlaceholder />;
 };
 
 export default FreshChatPage;

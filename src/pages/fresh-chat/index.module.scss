@@ -327,3 +327,39 @@ $accent-deep: #3d8f89;
   font-weight: 600;
   color: #ffffff;
 }
+
+.tipCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+}
+
+.tipIcon {
+  font-size: 44rpx;
+  line-height: 1.2;
+}
+
+.tipBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tipTitle {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: $text;
+}
+
+.tipDesc {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #5f7489;
+}

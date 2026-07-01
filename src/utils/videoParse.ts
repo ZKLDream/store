@@ -101,6 +101,14 @@ export const isDouyinDebugEnabled = (
   );
 };
 
+export const isDouyinAssistantEnabled = (
+  response: DouyinListResponse | null | undefined
+): boolean => {
+  return parseDouyinListValue(response).some(
+    (item) => item.key === 'douyin_ai' && item.value === '1'
+  );
+};
+
 
 export const normalizeShareUrl = (raw: string): string | null => {
   const trimmed = (raw || '').trim();
