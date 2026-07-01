@@ -15,7 +15,19 @@ import { useApp } from '@/store/AppContext';
 import styles from './index.module.scss';
 
 const PAGE_TITLE = '视频去水印';
-const PAGE_SUBTITLE = '抖音 · 小红书 · B站 一键去水印';
+const PAGE_SUBTITLE = '抖音 · 快手 · 小红书 · B站 一键去水印';
+const APK_DOWNLOAD_URL = 'https://ehngysobswsp.sealoshzh.site/api/app/download';
+
+// B 站采用音视频分离(DASH)，小程序端无法合成无水印视频，只能拿到带水印的 durl 单流。
+const isBilibiliUrl = (url: string): boolean => {
+  const normalized = (url || '').toLowerCase();
+  return (
+    normalized.includes('bilivideo.com') ||
+    normalized.includes('bilibili.com') ||
+    normalized.includes('b23.tv') ||
+    normalized.includes('hdslb.com')
+  );
+};
 
 const VideoDewatermarkPage: React.FC = () => {
   const { douyinDebugEnabled } = useApp();
@@ -132,15 +144,16 @@ const VideoDewatermarkPage: React.FC = () => {
       });
     });
 
-  const handleSaveToAlbum = async () => {
-    if (saving) {
-      return;
-    }
-    if (!previewUrl) {
-      Taro.showToast({ title: '暂无可保存的视频', icon: 'none' });
-      return;
-    }
+  const copyApkLink = () => {
+    Taro.setClipboardData({
+      data: APK_DOWNLOAD_URL,
+      success: () => {
+        Taro.showToast({ title: '下载链接已复制，请在浏览器打开', icon: 'none' });
+      },
+    });
+  };
 
+  const saveToAlbumViaCloud = async () => {
     setSaving(true);
     Taro.showLoading({ title: '转存中...', mask: true });
     try {
@@ -179,6 +192,38 @@ const VideoDewatermarkPage: React.FC = () => {
     }
   };
 
+  const handleSaveToAlbum = async () => {
+    if (saving) {
+      return;
+    }
+    if (!previewUrl) {
+      Taro.showToast({ title: '暂无可保存的视频', icon: 'none' });
+      return;
+    }
+
+    // B 站为音视频分离(DASH)，小程序端无法合成，只能存带水印的 durl 单流。
+    // 引导用户下载 App 获取真正的无水印视频，或选择仍然保存带水印版本。
+    if (isBilibiliUrl(previewUrl) || isBilibiliUrl(shareText)) {
+      // 注意：微信 showModal 的 confirmText/cancelText 最多 4 个字，超出会 fail
+      const modal = await Taro.showModal({
+        title: 'B站视频暂含水印',
+        content:
+          'B站采用音视频分离(DASH)，小程序端无法合成无水印视频。如需提取真正的无水印视频，请下载 App 使用；也可仍然保存当前带水印版本。',
+        confirmText: '去下载',
+        cancelText: '仍保存',
+      });
+      if (modal.confirm) {
+        copyApkLink();
+        return;
+      }
+      if (!modal.cancel) {
+        return;
+      }
+    }
+
+    await saveToAlbumViaCloud();
+  };
+
   return (
     <View className={styles.container}>
       <View className={styles.glowTop} />
@@ -192,7 +237,7 @@ const VideoDewatermarkPage: React.FC = () => {
       <View className={styles.card}>
         <Text className={styles.cardTitle}>粘贴分享链接</Text>
         <Text className={styles.cardDesc}>
-          复制抖音 / 小红书 / B站 的分享文案或链接，点击下方按钮去水印。
+          复制抖音 / 快手 / 小红书 / B站 的分享文案或链接，点击下方按钮去水印。
         </Text>
         <Textarea
           className={styles.input}

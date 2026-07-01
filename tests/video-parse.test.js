@@ -6,7 +6,6 @@ const {
   buildDirectUrlEndpoint,
   buildDouyinListEndpoint,
   parseDouyinListValue,
-  isAiAssistantApproved,
   isDouyinDebugEnabled,
   normalizeShareUrl,
   pickDownloadUrls,
@@ -57,18 +56,6 @@ test('parseDouyinListValue splits comma-separated key=value config', () => {
   );
   assert.deepEqual(parseDouyinListValue({ value: '' }), []);
   assert.deepEqual(parseDouyinListValue(null), []);
-});
-
-test('isAiAssistantApproved only true when approve_douyin_you=1 present', () => {
-  assert.equal(
-    isAiAssistantApproved({ ok: true, value: 'approve_douyin_you=1,douyin_detail=1' }),
-    true
-  );
-  assert.equal(isAiAssistantApproved({ value: 'douyin_detail=1' }), false);
-  assert.equal(isAiAssistantApproved({ value: 'approve_douyin_you=0' }), false);
-  assert.equal(isAiAssistantApproved({ value: 'approve_douyin_you=1' }), true);
-  assert.equal(isAiAssistantApproved({ value: '' }), false);
-  assert.equal(isAiAssistantApproved(null), false);
 });
 
 test('normalizeShareUrl extracts a clean url from share text', () => {

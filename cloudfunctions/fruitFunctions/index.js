@@ -1,6 +1,9 @@
 const cloud = require("wx-server-sdk");
 const https = require("https");
 const http = require("http");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const { URL } = require("url");
 
 cloud.init({
@@ -12,7 +15,24 @@ const db = cloud.database();
 const MAX_REDIRECTS = 5;
 const MAX_DOWNLOAD_BYTES = 300 * 1024 * 1024;
 
-const fetchBuffer = (url, redirectCount = 0) =>
+// B 站 CDN 防盗链要求 Referer 必须是 https://www.bilibili.com/，
+// 用 CDN 域名自身的 origin 会被 403/reset；其它站点沿用请求目标自身 origin。
+const isBilibiliCdn = (host) => {
+  const normalized = (host || "").toLowerCase();
+  return (
+    normalized.endsWith("bilivideo.com") ||
+    normalized.endsWith("bilibili.com") ||
+    normalized.endsWith("akamaized.net") ||
+    normalized.endsWith("hdslb.com")
+  );
+};
+
+const resolveReferer = (target) =>
+  isBilibiliCdn(target.hostname) ? "https://www.bilibili.com/" : target.origin;
+
+// 流式下载到本地临时文件，避免整段视频进内存导致云函数 OOM。
+// 边收边写磁盘，内存常驻仅 chunk 级；文件落在 /tmp（云函数可写目录）。
+const fetchToFile = (url, destPath, redirectCount = 0) =>
   new Promise((resolve, reject) => {
     if (redirectCount > MAX_REDIRECTS) {
       reject(new Error("重定向次数过多"));
@@ -32,8 +52,8 @@ const fetchBuffer = (url, redirectCount = 0) =>
       target,
       {
         headers: {
-          // 带 Referer / UA 绕过常见 CDN 防盗链
-          Referer: target.origin,
+          // 带 Referer / UA 绕过常见 CDN 防盗链；B 站 CDN 需要固定 bilibili.com 域名的 Referer
+          Referer: resolveReferer(target),
           "User-Agent":
             "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15",
         },
@@ -45,7 +65,7 @@ const fetchBuffer = (url, redirectCount = 0) =>
         if (status >= 300 && status < 400 && res.headers.location) {
           res.resume();
           const next = new URL(res.headers.location, target).toString();
-          resolve(fetchBuffer(next, redirectCount + 1));
+          resolve(fetchToFile(next, destPath, redirectCount + 1));
           return;
         }
 
@@ -55,18 +75,28 @@ const fetchBuffer = (url, redirectCount = 0) =>
           return;
         }
 
-        const chunks = [];
+        const writeStream = fs.createWriteStream(destPath);
         let received = 0;
+        let aborted = false;
+
         res.on("data", (chunk) => {
           received += chunk.length;
           if (received > MAX_DOWNLOAD_BYTES) {
+            aborted = true;
             req.destroy();
+            writeStream.destroy();
             reject(new Error("文件超过大小限制(300MB)"));
-            return;
           }
-          chunks.push(chunk);
         });
-        res.on("end", () => resolve(Buffer.concat(chunks)));
+
+        res.pipe(writeStream);
+
+        writeStream.on("finish", () => {
+          if (!aborted) {
+            resolve(received);
+          }
+        });
+        writeStream.on("error", reject);
         res.on("error", reject);
       }
     );
@@ -94,28 +124,36 @@ const downloadVideoToCloud = async (event) => {
     return { success: false, errMsg: "缺少 url 参数" };
   }
 
+  const ext = getExtFromUrl(url);
+  const tmpPath = path.join(
+    os.tmpdir(),
+    `${Date.now()}-${Math.random().toString(36).slice(2, 11)}.${ext}`
+  );
+
   try {
-    const buffer = await fetchBuffer(url);
-    const ext = getExtFromUrl(url);
+    const size = await fetchToFile(url, tmpPath);
     const cloudPath = `fruit-videos/${Date.now()}-${Math.random()
       .toString(36)
       .slice(2, 11)}.${ext}`;
 
     const uploadRes = await cloud.uploadFile({
       cloudPath,
-      fileContent: buffer,
+      fileContent: fs.createReadStream(tmpPath),
     });
 
     return {
       success: true,
       fileID: uploadRes.fileID,
-      size: buffer.length,
+      size,
     };
   } catch (e) {
     return {
       success: false,
       errMsg: e && e.message ? e.message : String(e),
     };
+  } finally {
+    // 无论成功失败都清理临时文件，避免 /tmp 撑爆
+    fs.promises.unlink(tmpPath).catch(() => {});
   }
 };
 

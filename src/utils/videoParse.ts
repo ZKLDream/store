@@ -69,14 +69,6 @@ export const parseDouyinListValue = (
     .filter((item) => item.key.length > 0);
 };
 
-export const isAiAssistantApproved = (
-  response: DouyinListResponse | null | undefined
-): boolean => {
-  return parseDouyinListValue(response).some(
-    (item) => item.key === 'approve_douyin_you' && item.value === '1'
-  );
-};
-
 export const isDouyinDebugEnabled = (
   response: DouyinListResponse | null | undefined
 ): boolean => {
@@ -111,12 +103,11 @@ export const normalizeShareUrl = (raw: string): string | null => {
 };
 
 const pickList = (single?: string, list?: string[]): string[] => {
-  const cleaned = (list || []).map((item) => (item || '').trim()).filter((item) => item.length > 0);
-  if (cleaned.length > 0) {
-    return cleaned;
-  }
   const fallback = (single || '').trim();
-  return fallback ? [fallback] : [];
+  if (fallback) {
+    return [fallback];
+  }
+  return (list || []).map((item) => (item || '').trim()).filter((item) => item.length > 0);
 };
 
 export const pickDownloadUrls = (response: DirectUrlResolveResponse | null | undefined): string[] => {

@@ -5,7 +5,6 @@ import { getBeforeList, deleteBeforeListRecord } from '@/utils/cloud';
 import {
   DEFAULT_PARSE_BASE_URL,
   buildDouyinListEndpoint,
-  isAiAssistantApproved,
   isDouyinDebugEnabled,
   DouyinListResponse,
 } from '@/utils/videoParse';
@@ -18,7 +17,6 @@ interface AppContextType {
   userName: string;
   salesRecordsLoading: boolean;
   listLoading: boolean;
-  aiAssistantEnabled: boolean;
   douyinDebugEnabled: boolean;
   addToList: (productId: number, fruitId: string | undefined, name: string, image: string, spec: string, price: number, costPrice: number, quantity: number) => void;
   updateListItemQuantity: (itemId: number, delta: number) => void;
@@ -43,7 +41,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [salesRecordsLoading, setSalesRecordsLoading] = useState(true);
   const [listLoading, setListLoading] = useState(true);
   const [cloudInitialized, setCloudInitialized] = useState(false);
-  const [aiAssistantEnabled, setAiAssistantEnabled] = useState(false);
   const [douyinDebugEnabled, setDouyinDebugEnabled] = useState(false);
 
   useEffect(() => {
@@ -55,7 +52,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       .then((res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const data = res.data as DouyinListResponse;
-          setAiAssistantEnabled(isAiAssistantApproved(data));
           setDouyinDebugEnabled(isDouyinDebugEnabled(data));
         }
       })
@@ -262,7 +258,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       userName,
       salesRecordsLoading,
       listLoading,
-      aiAssistantEnabled,
       douyinDebugEnabled,
       addToList,
       updateListItemQuantity,
