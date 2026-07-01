@@ -6,7 +6,10 @@ export default defineAppConfig({
     'pages/sales-record-list/index',
     'pages/sales-record-detail/index',
     'pages/product-management/index',
-    'pages/video-dewatermark/index'
+    'pages/video-dewatermark/index',
+    'pages/video-collection-list/index',
+    'pages/video-collection-player/index',
+    'pages/fresh-chat/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -1,0 +1,200 @@
+@use '@/styles/variables.scss' as *;
+
+$accent-pink: #ff2e63;
+
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  overflow: hidden;
+}
+
+.video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  padding: 0 $spacing-lg;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  height: 64rpx;
+  padding: 0 24rpx 0 16rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.backArrow {
+  font-size: 44rpx;
+  line-height: 44rpx;
+  color: #ffffff;
+}
+
+.backLabel {
+  font-size: $font-size-md;
+  color: #ffffff;
+}
+
+.bottomInfo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-lg;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+
+.episodeTag {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 46, 99, 0.85);
+  pointer-events: auto;
+}
+
+.episodeTagText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: #ffffff;
+}
+
+.episodeTagArrow {
+  font-size: $font-size-sm;
+  color: #ffffff;
+}
+
+.videoTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #ffffff;
+  @include text-ellipsis-multi(2);
+}
+
+.videoAuthor {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.panel {
+  max-height: 60vh;
+  box-sizing: border-box;
+  padding: $spacing-lg;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-lg});
+  border-radius: 32rpx 32rpx 0 0;
+  background: #141414;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.panelTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: #ffffff;
+}
+
+.panelCount {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: #b8b8b8;
+}
+
+.panelClose {
+  font-size: $font-size-lg;
+  color: #b8b8b8;
+  padding: 0 8rpx;
+}
+
+.panelScroll {
+  flex: 1;
+  max-height: 44vh;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.gridItem {
+  width: 108rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid transparent;
+}
+
+.gridItemActive {
+  background: rgba(255, 46, 99, 0.16);
+  border-color: $accent-pink;
+}
+
+.gridItemText {
+  font-size: $font-size-md;
+  color: #eaeaea;
+}
+
+.gridItemTextActive {
+  color: $accent-pink;
+  font-weight: $font-weight-bold;
+}
+
+.emptyWrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: #b8b8b8;
+}

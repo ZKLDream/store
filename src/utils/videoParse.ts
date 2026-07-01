@@ -34,6 +34,30 @@ export const buildDouyinListEndpoint = (baseUrl: string): string => {
   return `${normalized}api/douyinList`;
 };
 
+export const buildHejiExtractEndpoint = (baseUrl: string): string => {
+  const trimmed = (baseUrl || '').trim() || DEFAULT_PARSE_BASE_URL;
+  const normalized = trimmed.endsWith('/') ? trimmed : `${trimmed}/`;
+  return `${normalized}api/douyin/extract/heji`;
+};
+
+export interface HejiExtractItem {
+  index?: number;
+  title?: string;
+  author?: string;
+  duration?: string;
+  video_url?: string;
+  download_url?: string;
+}
+
+export interface HejiExtractResponse {
+  ok?: boolean;
+  message?: string;
+  item_id?: string;
+  report_file?: string;
+  item_count?: number;
+  items?: HejiExtractItem[];
+}
+
 export interface DouyinListResponse {
   ok?: boolean;
   value?: string;

@@ -4,12 +4,15 @@ import Taro from '@tarojs/taro';
 import {
   DEFAULT_PARSE_BASE_URL,
   buildDirectUrlEndpoint,
+  buildHejiExtractEndpoint,
   normalizeShareUrl,
   pickDownloadUrls,
   buildResultLines,
   DirectUrlResolveResponse,
+  HejiExtractResponse,
   ResultLine,
 } from '@/utils/videoParse';
+import { buildCollectionFromExtract, saveCollection } from '@/utils/videoCollection';
 import { downloadVideoToCloud, getTempFileUrl } from '@/utils/cloud';
 import { useApp } from '@/store/AppContext';
 import styles from './index.module.scss';
@@ -37,6 +40,7 @@ const VideoDewatermarkPage: React.FC = () => {
   const [resultLines, setResultLines] = useState<ResultLine[]>([]);
   const [previewUrl, setPreviewUrl] = useState('');
   const [saving, setSaving] = useState(false);
+  const [extracting, setExtracting] = useState(false);
 
   const handleResolve = async () => {
     const url = normalizeShareUrl(shareText);
@@ -81,6 +85,64 @@ const VideoDewatermarkPage: React.FC = () => {
       Taro.showToast({ title: message, icon: 'none' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExtractHeji = async () => {
+    if (extracting) {
+      return;
+    }
+    const url = normalizeShareUrl(shareText);
+    if (!url) {
+      Taro.showToast({ title: '请输入有效的合集链接', icon: 'none' });
+      return;
+    }
+
+    setExtracting(true);
+    setErrorMessage(null);
+    Taro.showLoading({ title: '提取合集中...', mask: true });
+
+    try {
+      const res = await Taro.request({
+        url: buildHejiExtractEndpoint(DEFAULT_PARSE_BASE_URL),
+        method: 'POST',
+        timeout: 180000,
+        header: { 'content-type': 'application/json' },
+        data: { url, target: 9999, count: 10 },
+      });
+
+      const data = res.data as HejiExtractResponse;
+      if (res.statusCode < 200 || res.statusCode >= 300 || !data) {
+        throw new Error(`提取失败，HTTP ${res.statusCode}`);
+      }
+      if (data.ok === false) {
+        throw new Error(data.message || '提取失败，请稍后再试');
+      }
+
+      const collection = buildCollectionFromExtract(data, url);
+      if (!collection) {
+        throw new Error('未解析到合集剧集');
+      }
+
+      saveCollection(collection);
+      Taro.hideLoading();
+
+      const modal = await Taro.showModal({
+        title: '提取成功',
+        content: `已保存合集《${collection.title}》，共 ${collection.episodeCount} 集。是否前往视频列表查看？`,
+        confirmText: '去查看',
+        cancelText: '留在此页',
+      });
+      if (modal.confirm) {
+        Taro.navigateTo({ url: '/pages/video-collection-list/index' });
+      }
+    } catch (error) {
+      Taro.hideLoading();
+      const message = error instanceof Error ? error.message : '提取失败，请稍后再试';
+      setErrorMessage(message);
+      Taro.showToast({ title: message, icon: 'none' });
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -255,6 +317,15 @@ const VideoDewatermarkPage: React.FC = () => {
         >
           <Text className={styles.primaryButtonText}>
             {loading ? '去水印中...' : '去水印'}
+          </Text>
+        </View>
+
+        <View
+          className={`${styles.extractButton} ${extracting ? styles.extractButtonDisabled : ''}`}
+          onClick={extracting ? undefined : handleExtractHeji}
+        >
+          <Text className={styles.extractButtonText}>
+            {extracting ? '提取合集中...' : '提取合集'}
           </Text>
         </View>
 

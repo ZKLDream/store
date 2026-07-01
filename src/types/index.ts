@@ -30,3 +30,22 @@ export interface SalesRecord {
   totalProfit: number;
   date: string;
 }
+
+export interface VideoEpisode {
+  index: number;
+  title: string;
+  author: string;
+  duration: string;
+  videoUrl: string;
+  downloadUrl: string;
+}
+
+export interface VideoCollection {
+  id: string;
+  title: string;
+  author: string;
+  sourceUrl: string;
+  episodeCount: number;
+  episodes: VideoEpisode[];
+  createdAt: number;
+}

@@ -80,6 +80,18 @@ const ProfilePage: React.FC = () => {
     });
   };
 
+  const handleGoToVideoCollections = () => {
+    Taro.navigateTo({
+      url: '/pages/video-collection-list/index'
+    });
+  };
+
+  const handleGoToFreshChat = () => {
+    Taro.navigateTo({
+      url: '/pages/fresh-chat/index'
+    });
+  };
+
   const displayName = userName || '用户';
   const displayId = userInfo && userInfo.openid ? `${userInfo.openid.slice(0, 8)}...` : '';
 
@@ -134,6 +146,28 @@ const ProfilePage: React.FC = () => {
             <View className={styles.entranceInfo}>
               <Text className={styles.entranceTitle}>抖音小红书B站去水印</Text>
               <Text className={styles.entranceDesc}>解析无水印视频</Text>
+            </View>
+          </View>
+          <Text className={styles.entranceArrow}>›</Text>
+        </View>
+
+        <View className={styles.entranceCard} onClick={handleGoToVideoCollections}>
+          <View className={styles.entranceLeft}>
+            <Text className={styles.entranceIcon}>📺</Text>
+            <View className={styles.entranceInfo}>
+              <Text className={styles.entranceTitle}>视频列表</Text>
+              <Text className={styles.entranceDesc}>已提取的合集</Text>
+            </View>
+          </View>
+          <Text className={styles.entranceArrow}>›</Text>
+        </View>
+
+        <View className={styles.entranceCard} onClick={handleGoToFreshChat}>
+          <View className={styles.entranceLeft}>
+            <Text className={styles.entranceIcon}>💬</Text>
+            <View className={styles.entranceInfo}>
+              <Text className={styles.entranceTitle}>清风助手</Text>
+              <Text className={styles.entranceDesc}>智能对话与整理</Text>
             </View>
           </View>
           <Text className={styles.entranceArrow}>›</Text>
