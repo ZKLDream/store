@@ -6,7 +6,6 @@ export default defineAppConfig({
     'pages/sales-record-list/index',
     'pages/sales-record-detail/index',
     'pages/product-management/index',
-    'pages/ai-chat/index',
     'pages/video-dewatermark/index'
   ],
   window: {

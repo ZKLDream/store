@@ -7,7 +7,7 @@ import { getUserOpenId, UserInfo, createCollection, getMiniProgramCode } from '@
 import styles from './index.module.scss';
 
 const ProfilePage: React.FC = () => {
-  const { userAvatar, userName, salesRecords, aiAssistantEnabled } = useApp();
+  const { userAvatar, userName, salesRecords } = useApp();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,12 +71,6 @@ const ProfilePage: React.FC = () => {
   const handleGoToProductManagement = () => {
     Taro.navigateTo({
       url: '/pages/product-management/index'
-    });
-  };
-
-  const handleGoToAiChat = () => {
-    Taro.navigateTo({
-      url: '/pages/ai-chat/index'
     });
   };
 
@@ -144,19 +138,6 @@ const ProfilePage: React.FC = () => {
           </View>
           <Text className={styles.entranceArrow}>›</Text>
         </View>
-
-        {aiAssistantEnabled ? (
-          <View className={styles.entranceCard} onClick={handleGoToAiChat}>
-            <View className={styles.entranceLeft}>
-              <Text className={styles.entranceIcon}>🤖</Text>
-              <View className={styles.entranceInfo}>
-                <Text className={styles.entranceTitle}>AI 助手</Text>
-                <Text className={styles.entranceDesc}>智能对话、生成图片</Text>
-              </View>
-            </View>
-            <Text className={styles.entranceArrow}>›</Text>
-          </View>
-        ) : null}
 
         <View className={styles.qrCodeSection}>
           <Text className={styles.introTitle}>小程序码</Text>
